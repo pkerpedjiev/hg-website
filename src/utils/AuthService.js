@@ -10,7 +10,8 @@ export default class AuthService extends EventEmitter {
     this.lock = new Auth0Lock(clientId, domain, {
       auth: {
         redirectUrl: `${window.location.origin}/login`,
-        responseType: 'token'
+        responseType: 'id_token',
+        params: {scope: 'openid email'}
       }
     })
     // Add callback for lock `authenticated` event
