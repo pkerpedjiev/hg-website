@@ -1,0 +1,7 @@
+@import url("../styles/base.css");
+@import url("../styles/queries.css");
+
+.navBar {
+   display: flex;
+   justify-content: space-between;
+}
