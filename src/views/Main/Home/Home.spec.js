@@ -7,9 +7,10 @@ import styles from './styles.module.css'
 
 describe('<Home />', () => {
     let wrapper;
+    let profile = {name: 'pkerpedjiev+test@gmail.com'};
 
     beforeEach(() => {
-        wrapper = shallow(<Home />);
+        wrapper = shallow(<Home profile={profile}/>);
     });
 
     it('can hit the server and retrieve a respone', () => {
