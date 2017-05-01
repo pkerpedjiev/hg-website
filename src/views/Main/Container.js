@@ -2,6 +2,7 @@ import React from 'react'
 import { Jumbotron } from 'react-bootstrap'
 import styles from './styles.module.css'
 import {PropTypes as T} from 'prop-types'
+import { Nav } from '../../../src/Nav/Nav.js'
 
 export class Container extends React.Component {
   static contextTypes = {
@@ -17,12 +18,15 @@ export class Container extends React.Component {
     }
 
     return (
-      <Jumbotron>
-        <h2 className={styles.mainTitle}>
-          <img src="https://cdn.auth0.com/styleguide/1.0.0/img/badge.svg" />
-        </h2>
-        {children}
-      </Jumbotron>
+      <div>
+          <Nav />
+          <Jumbotron>
+            <h2 className={styles.mainTitle}>
+              <img src="https://cdn.auth0.com/styleguide/1.0.0/img/badge.svg" />
+            </h2>
+            {children}
+          </Jumbotron>
+      </div>
     )
   }
 }

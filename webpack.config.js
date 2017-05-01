@@ -24,11 +24,11 @@ var config = getConfig({
   html: function (context) {
     return {
       'index.html': context.defaultTemplate({
-        title: 'auth0 React Sample',
+        title: 'HG Website',
         publicPath: isDev ? 'http://localhost:3000/' : '',
         meta: {
-          'name': 'auth0 React Sample',
-          'description': 'A minimal reactJS sample application showing auth0 integration'
+          'name': 'HG Website',
+          'description': 'An HG website'
         }
       })
     }
@@ -102,7 +102,7 @@ config.resolve.alias = {
   'containers': join(src, 'containers'),
   'components': join(src, 'components'),
   'utils': join(src, 'utils'),
-
+  'src': src,
   'styles': join(src, 'styles')
 }
 // end Roots
