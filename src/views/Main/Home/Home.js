@@ -39,6 +39,7 @@ export class Home extends React.Component {
   }
 
   render(){
+      console.log('profile:', this.state.profile);
     const { profile } = this.state
     return (
       <div className={styles.root}>
