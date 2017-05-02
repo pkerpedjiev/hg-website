@@ -19,7 +19,7 @@ export class Container extends React.Component {
 
     return (
       <div>
-          <Nav />
+          <Nav auth={this.props.route.auth}/>
           <Jumbotron>
             <h2 className={styles.mainTitle}>
               <img src="https://cdn.auth0.com/styleguide/1.0.0/img/badge.svg" />

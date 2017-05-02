@@ -4,6 +4,8 @@ import AuthService from 'utils/AuthService'
 import Container from './Container'
 import Home from './Home/Home'
 import Login from './Login/Login'
+import Logout from './Logout/Logout'
+import MyDataView from './MyDataView/MyDataView'
 
 const auth = new AuthService('tjaJsFZBcHshIStuYIjVxsMEOpyYEH3n', 'higlass.auth0.com');
 
@@ -20,6 +22,8 @@ export const makeMainRoutes = () => {
       <IndexRedirect to="/home" />
       <Route path="home" component={Home} onEnter={requireAuth} />
       <Route path="login" component={Login} />
+      <Route path="logout" component={Logout} />
+      <Route path="data" component={MyDataView} />
     </Route>
   )
 }
