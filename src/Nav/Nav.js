@@ -5,9 +5,11 @@ import styles from './styles.module.css';
 export class Nav extends React.Component {
     render() {
         let loggedInLinks = (<div>
+            <Link className={styles.headerItem} to="/datasets"><span>Datasets</span></Link>
             <Link to='/logout'><span>Logout</span></Link>
                              </div>);
         let loggedOutLinks = (<div>
+            <Link to="/datasets"><span>Datasets</span></Link>
             <Link to='/login'><span>Login</span></Link>
                              </div>);
 

@@ -5,7 +5,7 @@ import Container from './Container'
 import Home from './Home/Home'
 import Login from './Login/Login'
 import Logout from './Logout/Logout'
-import MyDataView from './MyDataView/MyDataView'
+import DatasetsList from './DatasetsList/DatasetsList.js'
 
 const auth = new AuthService('tjaJsFZBcHshIStuYIjVxsMEOpyYEH3n', 'higlass.auth0.com');
 
@@ -23,7 +23,7 @@ export const makeMainRoutes = () => {
       <Route path="home" component={Home} onEnter={requireAuth} />
       <Route path="login" component={Login} />
       <Route path="logout" component={Logout} />
-      <Route path="data" component={MyDataView} />
+      <Route path="datasets" component={DatasetsList} />
     </Route>
   )
 }
