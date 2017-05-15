@@ -6,6 +6,7 @@ import Home from './Home/Home'
 import Login from './Login/Login'
 import Logout from './Logout/Logout'
 import DatasetsList from './DatasetsList/DatasetsList.js'
+import HGViewer from '../../../src/HGViewer/HGViewer.jsx'
 
 const auth = new AuthService('tjaJsFZBcHshIStuYIjVxsMEOpyYEH3n', 'higlass.auth0.com');
 
@@ -24,6 +25,7 @@ export const makeMainRoutes = () => {
       <Route path="login" component={Login} />
       <Route path="logout" component={Logout} />
       <Route path="datasets" component={DatasetsList} />
+      <Route path="viewer" component={HGViewer} />
     </Route>
   )
 }

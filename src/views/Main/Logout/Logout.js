@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import { PropTypes as T } from 'prop-types';
 
 class Logout extends Component {

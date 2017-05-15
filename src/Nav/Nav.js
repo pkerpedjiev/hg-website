@@ -4,12 +4,15 @@ import styles from './styles.module.css';
 
 export class Nav extends React.Component {
     render() {
+
         let loggedInLinks = (<div>
+            <Link className={styles.headerItem} to="/viewer"><span>Viewer</span></Link>
             <Link className={styles.headerItem} to="/datasets"><span>Datasets</span></Link>
             <Link to='/logout'><span>Logout</span></Link>
                              </div>);
         let loggedOutLinks = (<div>
-            <Link to="/datasets"><span>Datasets</span></Link>
+            <Link className={styles.headerItem} to="/viewer"><span>Viewer</span></Link>
+            <Link to="/datasets" className={styles.headerItem}><span>Datasets</span></Link>
             <Link to='/login'><span>Login</span></Link>
                              </div>);
 
@@ -20,7 +23,7 @@ export class Nav extends React.Component {
             return (
           <div className={styles.navBar} >
             <div>
-                Header
+                <Link to="/home">HiGlass</Link>
             </div>
             <div>
                 {linksToDisplay}
