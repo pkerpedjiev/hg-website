@@ -21,16 +21,13 @@ var config = getConfig({
   isDev: isDev,
   in: join(src, 'app.js'),
   out: dest,
-  html: function (context) {
+  html: function (data) {
     return {
-      'index.html': context.defaultTemplate({
-        title: 'HG Website',
-        publicPath: isDev ? 'http://localhost:3000/' : '',
-        meta: {
-          'name': 'HG Website',
-          'description': 'An HG website'
-        }
-      })
+        "index.html": ['<!doctype html>',
+                       '<meta charset="utf-8"/>',
+        '<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>',
+        '<link rel="stylesheet" href="' + data.css + '"/>',
+        '<body><div id="root"></div><script src="' + data.main + '"></script></body>'].join('')
     }
   }
 });
@@ -106,6 +103,12 @@ config.resolve.alias = {
   'styles': join(src, 'styles')
 }
 // end Roots
+
+/*
+config.externals = {
+    'hglib': true
+}
+*/
 
 // Testing
 if (isTest) {
