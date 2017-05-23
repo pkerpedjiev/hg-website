@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Router } from 'react-router';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 class App extends React.Component {
   static contextTypes = {

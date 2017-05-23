@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { PropTypes as T } from 'prop-types';
 import AuthService from 'utils/AuthService'
-import {HiGlassComponent} from 'higlass';
+import * as hglib from 'higlass';  // eslint-disable-line
 
 let viewConf = {
   "editable": true,

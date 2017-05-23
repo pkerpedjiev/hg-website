@@ -3,7 +3,7 @@ import {Button} from 'react-bootstrap'
 import AuthService from 'utils/AuthService'
 import styles from './styles.module.css'
 import { PropTypes as T } from 'prop-types';
-import {hitServer} from 'utils/APIUtils';
+import {hitServer} from 'utils/APIUtils.js';
 
 export class Home extends React.Component {
   static contextTypes = {

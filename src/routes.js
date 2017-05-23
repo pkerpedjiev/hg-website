@@ -1,5 +1,6 @@
 import React from 'react'
 import {browserHistory, Router, Route, Redirect} from 'react-router'
+import { BrowserRouter } from 'react-router-dom'
 
 import makeMainRoutes from './views/Main/routes'
 
@@ -11,10 +12,10 @@ const NotFound = () => (
 )
 
   return (
-    <Route path=''>
+    <BrowserRouter>
       {main}
       <Route path='*' component={NotFound} / >
-    </Route>
+    </BrowserRouter>
   )
 }
 
