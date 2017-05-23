@@ -1,7 +1,11 @@
+import AuthService from 'utils/AuthService'
+import {Grid} from 'react-bootstrap';
+import Nav from 'src/Nav/Nav'
 import React from 'react';
 import PropTypes from 'prop-types';
 
 import { BrowserRouter as Router } from 'react-router-dom';
+const auth = new AuthService('tjaJsFZBcHshIStuYIjVxsMEOpyYEH3n', 'higlass.auth0.com');
 
 class App extends React.Component {
   static contextTypes = {
@@ -22,10 +26,16 @@ class App extends React.Component {
   }
 
   render () {
+      console.log('Nav:', Nav);
      return (
-       <div style={{ height: '100%' }}>
-         {this.content}
-       </div>
+         <Router>
+           <div style={{ height: '100%' }}>
+            <Nav auth={auth}/>
+            <Grid>
+                 
+             </Grid>
+           </div>
+       </Router>
      )
    }
 }
