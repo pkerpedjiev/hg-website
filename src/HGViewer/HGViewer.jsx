@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { PropTypes as T } from 'prop-types';
 import AuthService from 'utils/AuthService'
-import * as hglib from 'higlass';  // eslint-disable-line
+//import * as hglib from 'higlass';  // eslint-disable-line
 
 let viewConf = {
   "editable": true,
@@ -260,12 +260,6 @@ export default class HGViewer extends React.Component {
   render() {
     return (
         <div style={{width: "500px", height: "500px"}}>
-            <HiGlassComponent
-              viewConfig={viewConf}
-              options={{bounded: true}}
-            >
-
-            </HiGlassComponent>
         </div>
     );
   }

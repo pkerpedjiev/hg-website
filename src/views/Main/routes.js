@@ -3,8 +3,6 @@ import {Route, IndexRedirect} from 'react-router'
 import { browserHistory } from 'react-router'
 import AuthService from 'utils/AuthService'
 import Container from './Container'
-import Home from './Home/Home'
-import Login from './Login/Login'
 import Logout from './Logout/Logout'
 import DatasetsList from './DatasetsList/DatasetsList.js'
 import HGViewer from '../../../src/HGViewer/HGViewer.jsx'
@@ -22,8 +20,6 @@ export const makeMainRoutes = () => {
   return (
     <Route path="/" component={Container} auth={auth} history={browserHistory} >
       <IndexRedirect to="/home" />
-      <Route path="home" component={Home} onEnter={requireAuth} />
-      <Route path="login" component={Login} />
       <Route path="logout" component={Logout} />
       <Route path="datasets" component={DatasetsList} />
       <Route path="viewer" component={HGViewer} />

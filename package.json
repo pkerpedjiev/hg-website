@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "start": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --content-base src --profile --inline | grep -v '\\[\\d*\\]'",
-        "compile": "rm -rf dist/*; mkdir -p dist/scripts; mkdir -p dist/styles; NODE_ENV=production ./node_modules/webpack/bin/webpack.js -p; cp build/hglib.js dist/scripts; cp app/index.html dist/; cp app/hglib.html dist/; cp app/styles/page.css dist/styles/; zip -r dist.zip dist",
+        "compile": "rm -rf dist/*; mkdir -p dist/scripts; mkdir -p dist/styles; NODE_ENV=production ./node_modules/webpack/bin/webpack.js -p; cp build/app.js dist/scripts; cp app/index.html dist/; cp app/app.html dist/; cp app/styles/page.css dist/styles/; zip -r dist.zip dist",
     "clean": "rimraf dist",
     "build": "npm run clean && cross-env NODE_ENV=production webpack",
     "publish_pages": "gh-pages -d dist",
