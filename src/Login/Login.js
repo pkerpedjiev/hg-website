@@ -16,6 +16,7 @@ export class Login extends React.Component {
   }
 
   render() {
+      console.log('this.props:', this.props);
     const { auth } = this.props
     return (
       <div className={styles.root}>

@@ -11,6 +11,9 @@ module.exports = {
       app: ['./app.js']
   },
   devtool: "cheap-source-map",
+  devServer: {
+    historyApiFallback: true
+  },
   output: {
     path: __dirname + '/build',
     publicPath: '/',

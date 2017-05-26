@@ -1,11 +1,10 @@
 import React, { PropTypes } from 'react';
 import { Route, Redirect } from 'react-router-dom';
 
-const Public = ({ loggingIn, authenticated, component, ...rest }) => (
+const Public = ({ auth, ...rest }) => (
   <Route {...rest} render={(props) => {
-    if (loggingIn) return <div></div>;
-    return !authenticated ?
-    (React.createElement(component, { ...props, loggingIn, authenticated })) :
+    return (!auth.loggedIn()) ? 
+    (React.createElement(component, { ...props })) :
     (<Redirect to="/home" />);
   }} />
 );

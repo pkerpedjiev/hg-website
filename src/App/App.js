@@ -18,13 +18,15 @@ class App extends React.Component {
 
   render () {
       console.log('Nav:', Nav);
+      console.log("Login:", Login);
+
      return (
          <Router>
            <div style={{ height: '100%' }}>
             <Nav auth={auth}/>
               <Grid>
-                    <Authenticated exact path="/home" component={Home} />
-                    <Public path="/login" component={Login} />
+                    <Authenticated exact path="/home" component={Home} auth={auth} />
+                    <Public path="/login" component={() => <Login auth={auth} auth={auth} />} />
              </Grid>
            </div>
        </Router>
