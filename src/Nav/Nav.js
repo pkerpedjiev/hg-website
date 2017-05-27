@@ -17,8 +17,8 @@ export default class Nav extends React.Component {
                              </div>);
 
 
-        console.log('logged in', this.props.auth.loggedIn())
-        let linksToDisplay = this.props.auth.loggedIn() ? loggedInLinks : loggedOutLinks;
+        console.log('logged in', this.props.auth.isAuthenticated())
+        let linksToDisplay = this.props.auth.isAuthenticated() ? loggedInLinks : loggedOutLinks;
 
             return (
           <div className={styles.navBar} >

@@ -1,0 +1,8 @@
+.navBar {
+   display: flex;
+   justify-content: space-between;
+}
+
+.headerItem {
+    margin-right: 10px;
+}
