@@ -22,10 +22,13 @@ export const makeMainRoutes = () => {
           <Route path="/home" render={(props) => <Home auth={auth} {...props} />} />
           <Route path="/login" render={(props) => {
             auth.login();
+            console.log('history:', this.props.history);
+            this.props.history.replace('/home');
             return <Home auth={auth} {...props} />
           }} />
           <Route path="/logout" render={(props) => {
             auth.logout();
+            this.props.history.replace('/home');
             return <Home auth={auth} {...props} />
           }} />
           <Route path="/callback" render={(props) => {
