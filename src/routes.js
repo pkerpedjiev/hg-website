@@ -4,6 +4,7 @@ import App from './App';
 import Home from './Home/Home';
 import Callback from './Callback/Callback';
 import Auth from './Auth/Auth';
+import HGViewer from './HGViewer/HGViewer';
 import history from './history';
 
 const auth = new Auth();
@@ -20,15 +21,13 @@ export const makeMainRoutes = () => {
         <div>
           <Route path="/" render={(props) => <App auth={auth} {...props} />} />
           <Route path="/home" render={(props) => <Home auth={auth} {...props} />} />
+          <Route path="/viewer" render={(props) => <HGViewer auth={auth} {...props} />} />
           <Route path="/login" render={(props) => {
             auth.login();
-            console.log('history:', this.props.history);
-            this.props.history.replace('/home');
             return <Home auth={auth} {...props} />
           }} />
           <Route path="/logout" render={(props) => {
             auth.logout();
-            this.props.history.replace('/home');
             return <Home auth={auth} {...props} />
           }} />
           <Route path="/callback" render={(props) => {

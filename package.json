@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
+    "d3-request": "^1.0.5",
+    "react-bootstrap": "^0.31.0",
     "react-scripts": "0.9.5"
   },
   "dependencies": {
