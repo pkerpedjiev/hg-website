@@ -27,15 +27,9 @@ export default class HGViewer extends React.Component {
                 viewConfig={this.state.viewConf}
             /> : null;
         return(
-            <div style={{    width: "100%", height: "100vh",
-                marginTop: "-3rem",
-                paddingTop: "3rem",
-                position: "relative", 
-                display: "block"}}>
                 <div style={{"position": "absolute", "top": "30px", "bottom": "0px", "left": "0px", "right": "0px"}}>
                     { hgcComponent }
                 </div>
-            </div>
         );
     }
 }
