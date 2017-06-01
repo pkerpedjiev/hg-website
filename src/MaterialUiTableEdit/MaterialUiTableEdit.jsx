@@ -4,8 +4,6 @@ const ModeEdit = require('material-ui/svg-icons/editor/mode-edit').default
 const Check = require('material-ui/svg-icons/navigation/check').default
 const times = require('lodash.times')
 const {IconButton, Toggle, TextField, RaisedButton, DatePicker} = mui
-const injectTapEventPlugin = require('react-tap-event-plugin')
-injectTapEventPlugin()
 
 module.exports = React.createClass({
   getDefaultProps: () => {
@@ -137,7 +135,7 @@ module.exports = React.createClass({
       flexFlow: 'row nowrap',
       padding: row.header ? 0 : 12,
       border: 0,
-      borderBottom: '1px solid #ccc',
+      borderBottom: '0px solid #ccc',
       height: 50
     }
     const checkboxStyle = {
@@ -211,6 +209,10 @@ module.exports = React.createClass({
         })}
       </div>
     )
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({rows: nextProps.rows});
   },
 
   render: function () {

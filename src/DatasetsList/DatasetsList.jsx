@@ -2,8 +2,8 @@ import React from 'react'
 import {json} from 'd3-request';
 import slugid from 'slugid';
 import {dictValues} from '../utils';
-import TextField from 'material-ui/TextField';
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
+import EditTable from '../MaterialUiTableEdit/MaterialUiTableEdit.jsx';
 
 export default class DatasetsList extends React.Component {
     constructor(props) {
@@ -130,28 +130,27 @@ export default class DatasetsList extends React.Component {
     }
 
     render() {
-        let datasets = dictValues(this.state.tilesets).map(x => {
-            return(
-                <li key={x.uuid}>
-                    <TextField
-                        id={x.uuid + "-name"}
-                        disabled={true}
-                        defaultValue={x.name}
-                    />
-                    <TextField
-                        id={x.uuid + "-uuid"}
-                        disabled={true} 
-                        defaultValue={x.uuid}
-                    />
-                </li>);
+        let datasets1 = dictValues(this.state.tilesets).map(x => {
+            return {"columns": [{"value": x.uuid}, {"value": x.name}]}; 
         })
-        console.log('datasets:', datasets);
+        console.log('datasets:', datasets1);
+
+        const headers = [
+            {value: 'UID', type: 'TextField', width: 200},
+            {value: 'Name', type: 'TextField', width: 200}
+        ]
+
+        let datasets = [
+                    {"columns": [{"value": "sdfsd"}, {"value": "asds"}]}, 
+                    {"columns": [{"value": "sdfds"}, {"value": "asdfsd"}]}
+                    ]
 
         return(
             <div>
-                <ul>
-                    {datasets}
-                </ul>
+                <EditTable
+                    rows={ datasets1 }
+                    headerColumns={headers}
+                />
             </div>
         );
     }
