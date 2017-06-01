@@ -6,6 +6,7 @@ import Callback from './Callback/Callback';
 import Auth from './Auth/Auth';
 import HGViewer from './HGViewer/HGViewer';
 import history from './history';
+import DatasetsList from './DatasetsList/DatasetsList.jsx'
 
 const auth = new Auth();
 
@@ -22,6 +23,7 @@ export const makeMainRoutes = () => {
           <Route path="/" render={(props) => <App auth={auth} {...props} />} />
           <Route path="/home" render={(props) => <Home auth={auth} {...props} />} />
           <Route path="/viewer" render={(props) => <HGViewer auth={auth} {...props} />} />
+          <Route path="/datasets" render={(props) => <DatasetsList auth={auth} {...props} />} />
           <Route path="/login" render={(props) => {
             auth.login();
             return <Home auth={auth} {...props} />

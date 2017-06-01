@@ -4,8 +4,11 @@
   "private": true,
   "devDependencies": {
     "d3-request": "^1.0.5",
+    "material-ui": "^0.18.1",
     "react-bootstrap": "^0.31.0",
-    "react-scripts": "0.9.5"
+    "react-scripts": "0.9.5",
+    "react-tap-event-plugin": "^2.0.1",
+    "slugid": "^1.1.0"
   },
   "dependencies": {
     "auth0-js": "^8.6.0",
