@@ -1,13 +1,94 @@
 import React from 'react';
 import Check from 'material-ui/svg-icons/navigation/check';
 import ModeEdit from 'material-ui/svg-icons/editor/mode-edit';
-import {IconButton, Toggle, TextField, RaisedButton, DatePicker} from 'material-ui';
+import {IconButton, Toggle, TextField, DatePicker} from 'material-ui';
 
 export default class EditableTablEntry extends React.Component {
+  getCellValue(cell) {
+    const id = cell && cell.id
+    const type = this.props.headerColumns.map((header) => {
+      return header.type
+    })[id]
+    const selected = cell && cell.selected
+    const value = cell && cell.value
+    const rowId = cell && cell.rowId
+    const header = cell && cell.header
+    const width = cell && cell.width
+    const textFieldId = [id, rowId, header, 'text'].join('-')
+    const datePickerId = [id, rowId, header, 'date'].join('-')
+
+    const textFieldStyle = {
+      width: width
+    }
+
+    const datePickerStyle = {
+      width: width
+    }
+
+    const onTextFieldChange = (e) => {
+      const target = e.target
+      const value = target.value
+      var rows = this.state.rows
+      rows[rowId].columns[id].value = value
+      this.setState({rows: rows})
+    }
+
+    const onDatePickerChange = (e, date) => {
+      var rows = this.state.rows
+      rows[rowId].columns[id].value = date
+      this.setState({rows: rows})
+    }
+
+    const onToggle = (e) => {
+      var rows = this.state.rows
+      rows[rowId].columns[id].value = !rows[rowId].columns[id].value
+      this.setState({rows: rows})
+    }
+
+    if (header || (type && type === 'ReadOnly')) {
+      return <p style={{color: '#888'}}>{value}</p>
+    }
+
+    if (type) {
+      if (selected) {
+        if (type === 'TextField') {
+          return <TextField
+            id={textFieldId}
+            onChange={onTextFieldChange}
+            style={textFieldStyle}
+            value={value}
+          />
+        }
+        if (type === 'DatePicker') {
+          return <DatePicker
+            id={datePickerId}
+            onChange={onDatePickerChange}
+            mode='landscape'
+            style={datePickerStyle}
+            value={value}
+          />
+        }
+        if (type === 'Toggle') {
+          return <Toggle onToggle={onToggle} toggled={value} />
+        }
+      } else {
+        if (type === 'Toggle') {
+          return <Toggle disabled onToggle={onToggle} toggled={value} />
+        }
+      }
+    }
+
+    return <TextField
+      id={textFieldId}
+      style={textFieldStyle}
+      disabled
+      value={value}
+    />
+  }
+
   render() {
     let row = this.props.row;
 
-    const self = this
     const columns = row.columns
     const rowStyle = {
       width: '100%',
@@ -30,30 +111,35 @@ export default class EditableTablEntry extends React.Component {
     const rowKey = ['row', rowId].join('-')
 
     const onRowClick = function (e) {
-      var rows = self.state.rows
+      var rows = this.state.rows
       rows.forEach((row, i) => {
         if (rowId !== i) row.selected = false
       })
       rows[rowId].selected = !rows[rowId].selected
-      self.setState({rows: rows})
+      this.setState({rows: rows})
     }
 
-    const r = self.state.rows[rowId]
-    const selected = (r && r.selected) || false
+    const selected = (row && row.selected) || false
 
     const button = selected ? <Check /> : <ModeEdit />
     const tooltip = selected ? 'Done' : 'Edit'
 
     const onClick = function (e) {
       if (selected) {
-        self.update()
+        this.update()
       }
 
       onRowClick(e)
     }
 
+    console.log('row.header:', row.header);
+
     const checkbox = row.header ? <div style={checkboxStyle} />
-      : <IconButton style={checkboxStyle} tooltip={tooltip} onClick={onClick}>
+    : <IconButton 
+        onClick={onClick}
+        style={checkboxStyle} 
+        tooltip={tooltip} 
+      >
         {button}
       </IconButton>
 

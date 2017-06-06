@@ -140,11 +140,6 @@ export default class DatasetsList extends React.Component {
             {value: 'Name', type: 'TextField', width: 200}
         ]
 
-        let datasets = [
-                    {"columns": [{"value": "sdfsd"}, {"value": "asds"}]}, 
-                    {"columns": [{"value": "sdfds"}, {"value": "asdfsd"}]}
-                    ]
-
         return(
             <div>
                 <EditTable
