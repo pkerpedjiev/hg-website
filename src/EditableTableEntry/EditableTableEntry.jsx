@@ -110,33 +110,14 @@ export default class EditableTablEntry extends React.Component {
     const rowId = row.id
     const rowKey = ['row', rowId].join('-')
 
-    const onRowClick = function (e) {
-      var rows = this.state.rows
-      rows.forEach((row, i) => {
-        if (rowId !== i) row.selected = false
-      })
-      rows[rowId].selected = !rows[rowId].selected
-      this.setState({rows: rows})
-    }
-
     const selected = (row && row.selected) || false
 
     const button = selected ? <Check /> : <ModeEdit />
     const tooltip = selected ? 'Done' : 'Edit'
 
-    const onClick = function (e) {
-      if (selected) {
-        this.update()
-      }
-
-      onRowClick(e)
-    }
-
-    console.log('row.header:', row.header);
-
     const checkbox = row.header ? <div style={checkboxStyle} />
     : <IconButton 
-        onClick={onClick}
+        onClick={this.props.onRowClick}
         style={checkboxStyle} 
         tooltip={tooltip} 
       >

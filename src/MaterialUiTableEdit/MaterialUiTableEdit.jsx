@@ -5,36 +5,46 @@ const {RaisedButton} = mui
 
 import EditableTableEntry from '../EditableTableEntry/EditableTableEntry.jsx';
 
-module.exports = React.createClass({
-  getDefaultProps: () => {
-    return {
-      headerColumns: [],
-      rows: [],
-      onChange: function () {}
-    }
-  },
+export default class EditTable extends React.Component {
+    constructor(props) {
+        super(props);
 
-  getInitialState: function () {
+        this.state = {
+            headerColumns: [],
+            rows: [],
+            onChange: function () {}
+        }
+    }
+
+  getInitialState() {
     return {
       rows: this.props.rows,
       hoverValue: false,
       currentRow: false
     }
-  },
+  }
 
-  contextTypes: {
+  static contextTypes = {
     muiTheme: React.PropTypes.object.isRequired
-  },
+  }
 
-  update: function () {
-    const row = this.state.rows.filter((row) => {
-      return row.selected
-    })
-    this.props.onChange(row[0])
-  },
+  handleRowClick(row) {
+      var rows = this.state.rows
+      const rowId = row.id;
 
+      // somebody edited a row
+      if (rows[rowId].selected)
+          this.props.onChange(row);
 
-  renderHeader: function () {
+      rows.forEach((row, i) => {
+        if (rowId !== i) row.selected = false
+      })
+
+      rows[rowId].selected = !rows[rowId].selected
+      this.setState({rows: rows})
+  }
+
+  renderHeader() {
     const headerColumns = this.props.headerColumns
     const columns = headerColumns.map((column, id) => {
       return {value: column.value}
@@ -42,14 +52,14 @@ module.exports = React.createClass({
     const row = {columns: columns, header: true}
 
     return (<EditableTableEntry row={row} headerColumns={this.props.headerColumns}/>);
-  },
+  }
 
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     this.setState({rows: nextProps.rows});
-  },
+  }
 
-  render: function () {
+  render() {
     const self = this
     const style = {
       display: 'flex',
@@ -102,6 +112,7 @@ module.exports = React.createClass({
                 key={row.id}
                 headerColumns={this.props.headerColumns}
                 row={row} 
+                onRowClick={() => this.handleRowClick(row)}
             />)
         })}
         <RaisedButton
@@ -112,4 +123,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}
