@@ -12,7 +12,6 @@ export default class EditTable extends React.Component {
         this.state = {
             headerColumns: [],
             rows: [],
-            onChange: function () {}
         }
     }
 
@@ -33,8 +32,8 @@ export default class EditTable extends React.Component {
       const rowId = row.id;
 
       // somebody edited a row
-      if (rows[rowId].selected)
-          this.props.onChange(row);
+      if (rows[rowId].selected && this.props.onRowChange)
+          this.props.onRowChange(row);
 
       rows.forEach((row, i) => {
         if (rowId !== i) row.selected = false
