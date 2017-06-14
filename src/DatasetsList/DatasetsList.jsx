@@ -9,11 +9,25 @@ export default class DatasetsList extends React.Component {
     constructor(props) {
         super(props)
 
-        this.trackSourceServers = ["http://higlass.io/api/v1"];
+        // the servers supplying tileset data
+        this.trackSourceServers = new Set(["http://higlass.io/api/v1"]);
+        this.serverDataPositions = {};
+        this.serverDataCounts = {};
+
+        this.pageSize = 20;
+
+        // how many entries we've received from each server so far
+        // necessary for pagination
+        for (let server of this.trackSourceServers) {
+            this.serverDataPositions[server] = 0;
+            this.serverDataCounts[server] = 0;
+        }
+
         this.requestTilesetLists();
 
         this.state = {
-            tilesets: []
+            tilesets: [],
+            currentDataPosition: 0
         }
     }
     prepareNewEntries(sourceServer, newEntries, existingTilesets) {
@@ -58,9 +72,14 @@ export default class DatasetsList extends React.Component {
             return ane;
         });
 
+        /*
         entries.forEach(ne => {
             allTilesets[ne.serverUidKey] = ne;
         });
+        */
+
+        allTilesets = allTilesets.concat(entries);
+        // need to be sorted
 
         return allTilesets;
     }
@@ -92,9 +111,15 @@ export default class DatasetsList extends React.Component {
         /**
          * Request a list of the tilesets from each known server.
          */
+        let sent = 0;
+        let finished = 0;
+
         this.trackSourceServers.forEach( sourceServer => {
+            sent += 1;
             json(sourceServer + '/tilesets/',
                  function(error, data) {
+                    finished += 1;
+
                     if (error) {
                         console.error('ERROR:', error);
                     } else {
@@ -103,10 +128,18 @@ export default class DatasetsList extends React.Component {
                                                                  data.results, 
                                                                  this.state.tilesets);
 
-                        console.log('new tilesets', newTilesets);
+                        this.serverDataPositions[sourceServer] += data.results.length;
+                        this.serverDataCounts[sourceServer] = data.count;
+
                         this.setState({
                             tilesets: newTilesets
                         });
+                    }
+
+                    if (finished === sent) {
+                        // all requests have been loaded
+                        console.log('All loaded...');
+                        console.log('serverDataPositions:', this.serverDataPositions);
                     }
                 }.bind(this));
         });
@@ -129,10 +162,40 @@ export default class DatasetsList extends React.Component {
         }
     }
 
+    handleNextPage() {
+        /**
+         * Move on to the next page of results
+         */
+
+        let maxDataCount = dictValues(this.serverDataCounts).reduce((a,b) => a+b, 0);
+        console.log('maxDataCount:', maxDataCount);
+
+        this.setState({
+            currentDataPosition: Math.min(this.state.currentDataPosition + this.pageSize,
+                                          maxDataCount)
+        });
+    }
+
+    handlePrevPage() {
+        /**
+         * Return to the previous page of results
+         */
+        this.setState({
+            currentDataPosition: Math.max(this.state.currentDataPosition - this.pageSize,
+                                          0)
+
+        });
+    }
+
     render() {
-        let datasets1 = dictValues(this.state.tilesets).map(x => {
+        console.log('currentDataPosition:', this.state.currentDataPosition);
+        let datasets1 = this.state.tilesets
+        .slice(this.state.currentDataPosition, this.pageSize)
+        .map(x => {
             return {"columns": [{"value": x.uuid}, {"value": x.name}]}; 
         })
+
+        console.log('this.state.tilesets:', this.state.tilesets);
         console.log('datasets:', datasets1);
 
         const headers = [
@@ -146,6 +209,9 @@ export default class DatasetsList extends React.Component {
                     rows={ datasets1 }
                     headerColumns={headers}
                 />
+                <a onClick={this.handlePrevPage.bind(this)}>{"Prev"}</a>
+                ...
+                <a onClick={this.handleNextPage.bind(this)}>{"next"}</a>
             </div>
         );
     }
