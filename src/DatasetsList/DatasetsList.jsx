@@ -4,6 +4,9 @@ import slugid from 'slugid';
 import {dictValues} from '../utils';
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import EditTable from '../MaterialUiTableEdit/MaterialUiTableEdit.jsx';
+import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
+import TextField from 'material-ui/TextField';
+import RaisedButton from 'material-ui/RaisedButton';
 
 export default class DatasetsList extends React.Component {
     constructor(props) {
@@ -14,7 +17,7 @@ export default class DatasetsList extends React.Component {
         this.serverDataPositions = {};
         this.serverDataCounts = {};
 
-        this.pageSize = 20;
+        this.pageSize = 10;
 
         // how many entries we've received from each server so far
         // necessary for pagination
@@ -23,7 +26,9 @@ export default class DatasetsList extends React.Component {
             this.serverDataCounts[server] = 0;
         }
 
-        this.requestTilesetLists();
+        // fetch the first two pages of results
+        this.requestTilesetLists(0);
+        this.requestTilesetLists(this.pageSize);
 
         this.state = {
             tilesets: [],
@@ -72,13 +77,11 @@ export default class DatasetsList extends React.Component {
             return ane;
         });
 
-        /*
         entries.forEach(ne => {
             allTilesets[ne.serverUidKey] = ne;
         });
-        */
 
-        allTilesets = allTilesets.concat(entries);
+        // allTilesets = allTilesets.concat(entries);
         // need to be sorted
 
         return allTilesets;
@@ -107,7 +110,7 @@ export default class DatasetsList extends React.Component {
 
     }
 
-    requestTilesetLists() {
+    requestTilesetLists(offset) {
         /**
          * Request a list of the tilesets from each known server.
          */
@@ -116,7 +119,7 @@ export default class DatasetsList extends React.Component {
 
         this.trackSourceServers.forEach( sourceServer => {
             sent += 1;
-            json(sourceServer + '/tilesets/',
+            json(sourceServer + '/tilesets/?limit=' + this.pageSize + "&offset=" + offset,
                  function(error, data) {
                     finished += 1;
 
@@ -128,7 +131,7 @@ export default class DatasetsList extends React.Component {
                                                                  data.results, 
                                                                  this.state.tilesets);
 
-                        this.serverDataPositions[sourceServer] += data.results.length;
+                                                                 //this.serverDataPositions[sourceServer] += data.results.length;
                         this.serverDataCounts[sourceServer] = data.count;
 
                         this.setState({
@@ -170,6 +173,10 @@ export default class DatasetsList extends React.Component {
         let maxDataCount = dictValues(this.serverDataCounts).reduce((a,b) => a+b, 0);
         console.log('maxDataCount:', maxDataCount);
 
+
+        // fetch the next page, we should always be two pages ahead
+        this.requestTilesetLists(this.state.currentDataPosition + this.pageSize);
+
         this.setState({
             currentDataPosition: Math.min(this.state.currentDataPosition + this.pageSize,
                                           maxDataCount)
@@ -189,8 +196,10 @@ export default class DatasetsList extends React.Component {
 
     render() {
         console.log('currentDataPosition:', this.state.currentDataPosition);
-        let datasets1 = this.state.tilesets
-        .slice(this.state.currentDataPosition, this.pageSize)
+        console.log('this.state.tilesets:', this.state.tilesets);
+
+        let datasets1 = dictValues(this.state.tilesets)
+        .slice(this.state.currentDataPosition, this.state.currentDataPosition + this.pageSize)
         .map(x => {
             return {"columns": [{"value": x.uuid}, {"value": x.name}]}; 
         })
@@ -205,6 +214,17 @@ export default class DatasetsList extends React.Component {
 
         return(
             <div>
+                <Toolbar> 
+                    <ToolbarGroup firstChild={true} lastChild={true}>
+
+                        <TextField 
+                            hintText="Filter by text"
+                            floatingLabelText="Filter"
+                        >
+                        </TextField>
+
+                    </ToolbarGroup>
+                </Toolbar>
                 <EditTable
                     rows={ datasets1 }
                     headerColumns={headers}
