@@ -30,6 +30,8 @@ export default class DatasetsList extends React.Component {
         this.requestTilesetLists(0);
         this.requestTilesetLists(this.pageSize);
 
+        this.searchValue = null;
+
         this.state = {
             tilesets: [],
             currentDataPosition: 0
@@ -119,7 +121,12 @@ export default class DatasetsList extends React.Component {
 
         this.trackSourceServers.forEach( sourceServer => {
             sent += 1;
-            json(sourceServer + '/tilesets/?limit=' + this.pageSize + "&offset=" + offset,
+            let targetUrl = sourceServer + '/tilesets/?limit=' + this.pageSize + "&offset=" + offset
+
+            if (this.searchValue && this.searchValue.length > 0)
+                targetUrl += "&ac=" + this.searchValue;
+
+            json(targetUrl,
                  function(error, data) {
                     finished += 1;
 
@@ -194,6 +201,30 @@ export default class DatasetsList extends React.Component {
         });
     }
 
+    handleFilterChanged(event, newValue) {
+        /**
+         * The datset filter search box field changed
+         *
+         * Arguments
+         * ---------
+         *  event: object
+         *      Change event targeting the text field.
+         *  newValue: string
+         *      The new value of the text field.
+         */
+        console.log('newValue:', newValue);
+        console.log('this:', this);
+        this.searchValue = newValue;
+
+        // clear all previously retrieved tilesets
+        this.setState({
+            tilesets: []
+        });
+
+        // we're going to the top of the list
+        this.requestTilesetLists(0);
+    }
+
     render() {
         console.log('currentDataPosition:', this.state.currentDataPosition);
         console.log('this.state.tilesets:', this.state.tilesets);
@@ -220,6 +251,7 @@ export default class DatasetsList extends React.Component {
                         <TextField 
                             hintText="Filter by text"
                             floatingLabelText="Filter"
+                            onChange={this.handleFilterChanged.bind(this)}
                         >
                         </TextField>
 

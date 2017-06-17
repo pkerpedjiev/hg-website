@@ -114,11 +114,6 @@ export default class EditTable extends React.Component {
                 onRowClick={() => this.handleRowClick(row)}
             />)
         })}
-        <RaisedButton
-          onClick={onButtonClick}
-          style={buttonStyle}
-          label='Add Row'
-        />
       </div>
     )
   }
