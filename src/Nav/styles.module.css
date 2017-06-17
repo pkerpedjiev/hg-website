@@ -1,8 +1,30 @@
+@import url('https://fonts.googleapis.com/css?family=Hind:400,600');
+
+
 .navBar {
    display: flex;
    justify-content: space-between;
+   padding-top: 8px;
+   padding-bottom: 8px;
+   font-weight: 600;
+   font-family: 'Hind', sans-serif;
+   font-size: 20px;
+}
+
+a:link {
+    text-decoration: none;
+    color: #555;
+}
+
+a:visited {
+    color: #555;
+}
+
+a:hover {
+    color: #aaa;
 }
 
 .headerItem {
     margin-right: 10px;
+    font-size: 18px;
 }

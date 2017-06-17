@@ -8,12 +8,12 @@ export default class Nav extends React.Component {
         let loggedInLinks = (<div>
             <Link className={"headerItem"} to="/viewer"><span>Viewer</span></Link>
             <Link className={"headerItem"} to="/datasets"><span>Datasets</span></Link>
-            <Link to='/logout'><span>Logout</span></Link>
+            <Link className={"headerItem"} to='/logout'><span>Logout</span></Link>
                              </div>);
         let loggedOutLinks = (<div>
             <Link className={"headerItem"} to="/viewer"><span>Viewer</span></Link>
-            <Link to="/datasets" className={"headerItem"}><span>Datasets</span></Link>
-            <Link to='/login'><span>Login</span></Link>
+            <Link className={"headerItem"} to="/datasets"><span>Datasets</span></Link>
+            <Link className={"headerItem"} to='/login'><span>Login</span></Link>
                              </div>);
 
 
@@ -22,10 +22,7 @@ export default class Nav extends React.Component {
 
             return (
           <div className={"navBar"} >
-            {"Navbar"}
-            <div>
-                <Link to="/home">HiGlass</Link>
-            </div>
+            <Link to="/home">HiGlass</Link>
             <div>
                 {linksToDisplay}
             </div>

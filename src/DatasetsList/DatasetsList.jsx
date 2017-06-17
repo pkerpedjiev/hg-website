@@ -6,7 +6,6 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import EditTable from '../MaterialUiTableEdit/MaterialUiTableEdit.jsx';
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
 import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
 
 export default class DatasetsList extends React.Component {
     constructor(props) {
@@ -133,7 +132,6 @@ export default class DatasetsList extends React.Component {
                     if (error) {
                         console.error('ERROR:', error);
                     } else {
-                        console.log('data:', data);
                         let newTilesets = this.prepareNewEntries(sourceServer, 
                                                                  data.results, 
                                                                  this.state.tilesets);
@@ -148,8 +146,7 @@ export default class DatasetsList extends React.Component {
 
                     if (finished === sent) {
                         // all requests have been loaded
-                        console.log('All loaded...');
-                        console.log('serverDataPositions:', this.serverDataPositions);
+
                     }
                 }.bind(this));
         });
