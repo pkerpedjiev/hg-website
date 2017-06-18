@@ -4,7 +4,6 @@ import slugid from 'slugid';
 import {dictValues} from '../utils';
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import EditTable from '../MaterialUiTableEdit/MaterialUiTableEdit.jsx';
-import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
 import TextField from 'material-ui/TextField';
 import './styles.module.css';
 
@@ -30,7 +29,7 @@ export default class DatasetsList extends React.Component {
         this.requestTilesetLists(0);
         this.requestTilesetLists(this.pageSize);
 
-        this.searchValue = null;
+        this.searchValue = "";
 
         this.state = {
             tilesets: [],
@@ -216,7 +215,7 @@ export default class DatasetsList extends React.Component {
 
         // clear all previously retrieved tilesets
         this.setState({
-            tilesets: []
+            currentDataPosition: 0
         });
 
         // we're going to the top of the list
@@ -228,6 +227,12 @@ export default class DatasetsList extends React.Component {
         console.log('this.state.tilesets:', this.state.tilesets);
 
         let datasets1 = dictValues(this.state.tilesets)
+        .filter(x => {
+            console.log('x:', x);
+            if (this.searchValue.length)
+                return x.name.toLowerCase().includes(this.searchValue.toLowerCase());
+            return true;
+        })
         .slice(this.state.currentDataPosition, this.state.currentDataPosition + this.pageSize)
         .map(x => {
             return {"columns": [{"value": x.uuid}, {"value": x.name}, {"value": x.datatype}]}; 
@@ -245,7 +250,7 @@ export default class DatasetsList extends React.Component {
         return(
             <div>
                         <TextField 
-                            style={{ "display" : "block", "margin": "auto", "margin-bottom": "10px" }}
+                            style={{ "display" : "block", "margin": "auto", "marginBottom": "10px" }}
                             hintText=""
                             floatingLabelText="Filter datasets"
                             onChange={this.handleFilterChanged.bind(this)}
