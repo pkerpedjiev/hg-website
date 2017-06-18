@@ -9,3 +9,4 @@ dist
 *.swn
 build
 dist.zip
+.DS_Store
