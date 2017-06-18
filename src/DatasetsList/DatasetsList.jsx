@@ -6,6 +6,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import EditTable from '../MaterialUiTableEdit/MaterialUiTableEdit.jsx';
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
 import TextField from 'material-ui/TextField';
+import './styles.module.css';
 
 export default class DatasetsList extends React.Component {
     constructor(props) {
@@ -229,38 +230,50 @@ export default class DatasetsList extends React.Component {
         let datasets1 = dictValues(this.state.tilesets)
         .slice(this.state.currentDataPosition, this.state.currentDataPosition + this.pageSize)
         .map(x => {
-            return {"columns": [{"value": x.uuid}, {"value": x.name}]}; 
+            return {"columns": [{"value": x.uuid}, {"value": x.name}, {"value": x.datatype}]}; 
         })
 
         console.log('this.state.tilesets:', this.state.tilesets);
         console.log('datasets:', datasets1);
 
         const headers = [
-            {value: 'UID', type: 'TextField', width: 200},
-            {value: 'Name', type: 'TextField', width: 200}
+            {value: 'UID', type: 'TextField', width: 100},
+            {value: 'Name', type: 'TextField', width: 300},
+            {value: 'Datatype', type: 'TextField', width: 100}
         ]
 
         return(
             <div>
-                <Toolbar> 
-                    <ToolbarGroup firstChild={true} lastChild={true}>
-
                         <TextField 
-                            hintText="Filter by text"
-                            floatingLabelText="Filter"
+                            style={{ "display" : "block", "margin": "auto", "margin-bottom": "10px" }}
+                            hintText=""
+                            floatingLabelText="Filter datasets"
                             onChange={this.handleFilterChanged.bind(this)}
                         >
                         </TextField>
-
-                    </ToolbarGroup>
-                </Toolbar>
                 <EditTable
                     rows={ datasets1 }
                     headerColumns={headers}
                 />
-                <a onClick={this.handlePrevPage.bind(this)}>{"Prev"}</a>
-                ...
-                <a onClick={this.handleNextPage.bind(this)}>{"next"}</a>
+                <div 
+                    style={{
+                        marginTop: 20,
+                        marginLeft: "auto",
+                        marginRight: "auto",
+                        width: 80
+                    }}
+                >
+                    <img src="img/backward.svg" 
+                        width="30px"
+                        onClick={this.handlePrevPage.bind(this)}
+                        className={"navigation-button"}
+                    />
+                    <img src="img/forward.svg" 
+                        width="30px"
+                        onClick={this.handleNextPage.bind(this)}
+                        className={"navigation-button"}
+                    />
+                </div>
             </div>
         );
     }

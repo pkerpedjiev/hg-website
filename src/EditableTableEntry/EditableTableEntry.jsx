@@ -91,13 +91,13 @@ export default class EditableTablEntry extends React.Component {
 
     const columns = row.columns
     const rowStyle = {
-      width: '100%',
+        //width: '100%',
       display: 'flex',
       flexFlow: 'row nowrap',
-      padding: row.header ? 0 : 12,
+      padding: row.header ? 0 : 8,
       border: 0,
       borderBottom: '0px solid #ccc',
-      height: 50
+      height: 30
     }
     const checkboxStyle = {
       display: 'flex',
@@ -137,6 +137,7 @@ export default class EditableTablEntry extends React.Component {
             flexGrow: 0.15,
             flexBasis: 'content',
             alignItems: 'center',
+            padding: '5px',
             height: 30,
             width: width || 200
           }
