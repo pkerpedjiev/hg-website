@@ -3,7 +3,7 @@ import Check from 'material-ui/svg-icons/navigation/check';
 import ModeEdit from 'material-ui/svg-icons/editor/mode-edit';
 import {IconButton, Toggle, TextField, DatePicker} from 'material-ui';
 
-export default class EditableTablEntry extends React.Component {
+export default class EditableTableEntry extends React.Component {
   getCellValue(cell) {
     const id = cell && cell.id
     const type = this.props.headerColumns.map((header) => {

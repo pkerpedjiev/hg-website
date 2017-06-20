@@ -39,6 +39,7 @@ export default class EditTable extends React.Component {
       this.setState({rows: rows})
   }
 
+
   renderHeader() {
     const headerColumns = this.props.headerColumns
     const columns = headerColumns.map((column, id) => {
@@ -46,7 +47,61 @@ export default class EditTable extends React.Component {
     })
     const row = {columns: columns, header: true}
 
-    return (<EditableTableEntry row={row} headerColumns={this.props.headerColumns}/>);
+    const checkboxStyle = {
+      display: 'flex',
+      flexFlow: 'row nowrap',
+      width: 50,
+      height: 24,
+      alignItems: 'center'
+    }
+
+    const rowStyle = {
+        //width: '100%',
+      display: 'flex',
+      flexFlow: 'row nowrap',
+      padding: row.header ? 0 : 8,
+      border: 0,
+      borderBottom: '0px solid #ccc',
+      height: 30
+    }
+
+    return (
+        <div key={"header"} style={rowStyle}>
+            <div style={checkboxStyle} />
+            { 
+                headerColumns.map((header, id) => {
+                    const width = header.width
+                    console.log('header:', header);
+
+                    let cellStyle = {
+                      display: 'flex',
+                      flexFlow: 'row nowrap',
+                      flexGrow: 0.15,
+                      flexBasis: 'content',
+                      alignItems: 'center',
+                      padding: '5px',
+                      height: 30,
+                      width: width || 200
+                    }
+
+                    console.log('this.props.sortBy:', this.props.sortBy);
+                    if (this.props.sortBy == header.field)
+                        cellStyle.background = "#aaa";
+
+                    return (
+                      <div 
+                        key={"header-" + id}
+                        className='cell' 
+                        onClick={() => this.props.onSortBy(header.field)}
+                        style={cellStyle}>
+                            <div>
+                                {header.value}
+                            </div>
+                      </div>)
+                })
+            }
+        </div>
+    );
   }
 
 
@@ -64,6 +119,7 @@ export default class EditTable extends React.Component {
     }
 
     const rows = this.state.rows
+    console.log('rendering...');
 
     return (
       <div className='container' style={style}>

@@ -33,7 +33,8 @@ export default class DatasetsList extends React.Component {
 
         this.state = {
             tilesets: [],
-            currentDataPosition: 0
+            currentDataPosition: 0,
+            sortBy: null
         }
     }
     prepareNewEntries(sourceServer, newEntries, existingTilesets) {
@@ -111,7 +112,7 @@ export default class DatasetsList extends React.Component {
 
     }
 
-    requestTilesetLists(offset) {
+    requestTilesetLists(offset, sortBy) {
         /**
          * Request a list of the tilesets from each known server.
          */
@@ -124,6 +125,8 @@ export default class DatasetsList extends React.Component {
 
             if (this.searchValue && this.searchValue.length > 0)
                 targetUrl += "&ac=" + this.searchValue;
+            if (sortBy)
+                targetUrl += "&s=" + sortBy;
 
             json(targetUrl,
                  function(error, data) {
@@ -198,6 +201,34 @@ export default class DatasetsList extends React.Component {
         });
     }
 
+  handleSortBy(columnName) {
+      /**
+       * The user has chosen a sort order. This is usually
+       * accomplished by clicking on one of the columns
+       *
+       * Arguments
+       * ---------
+       *
+       *  columnName: string
+       *    The name of the column to sort by
+       *
+       * Returns:
+       * -------
+       *
+       *  nothing
+       */
+      console.log('sort by:', columnName);
+
+      // if someone clicks the column currently being sorted by,
+      // undo sorting
+      if (columnName == this.state.sortBy)
+          columnName = null;
+
+      this.setState({
+          sortBy: columnName
+      });
+  }
+
     handleFilterChanged(event, newValue) {
         /**
          * The datset filter search box field changed
@@ -233,18 +264,25 @@ export default class DatasetsList extends React.Component {
                 return x.name.toLowerCase().includes(this.searchValue.toLowerCase());
             return true;
         })
-        .slice(this.state.currentDataPosition, this.state.currentDataPosition + this.pageSize)
+
+        if (this.state.sortBy)
+            datasets1 = datasets1.sort((a,b) => 
+                                       a[this.state.sortBy.toLowerCase()]
+                                       .localeCompare(b[this.state.sortBy.toLowerCase()]));
+
+        datasets1 = datasets1.slice(this.state.currentDataPosition, this.state.currentDataPosition + this.pageSize)
         .map(x => {
             return {"columns": [{"value": x.uuid}, {"value": x.name}, {"value": x.datatype}]}; 
         })
+
 
         console.log('this.state.tilesets:', this.state.tilesets);
         console.log('datasets:', datasets1);
 
         const headers = [
-            {value: 'UID', type: 'TextField', width: 100},
-            {value: 'Name', type: 'TextField', width: 300},
-            {value: 'Datatype', type: 'TextField', width: 100}
+            {value: 'UID', field: 'uuid', type: 'TextField', width: 100},
+            {value: 'Name', field: 'name', type: 'TextField', width: 300},
+            {value: 'Datatype', field: 'datatype', type: 'TextField', width: 100}
         ]
 
         return(
@@ -258,7 +296,10 @@ export default class DatasetsList extends React.Component {
                         </TextField>
                 <EditTable
                     rows={ datasets1 }
+                    sortyBy={this.state.sortBy}
                     headerColumns={headers}
+                    onSortBy={this.handleSortBy.bind(this)}
+                    sortBy={this.state.sortBy}
                 />
                 <div 
                     style={{
@@ -269,11 +310,13 @@ export default class DatasetsList extends React.Component {
                     }}
                 >
                     <img src="img/backward.svg" 
+                        alt="Previous datasets"
                         width="30px"
                         onClick={this.handlePrevPage.bind(this)}
                         className={"navigation-button"}
                     />
                     <img src="img/forward.svg" 
+                        alt="Next datasets"
                         width="30px"
                         onClick={this.handleNextPage.bind(this)}
                         className={"navigation-button"}
