@@ -27,7 +27,8 @@ export default class EditTable extends React.Component {
       var rows = this.state.rows
       const rowId = row.id;
 
-      // somebody edited a row
+      console.log('row clicked:', row);
+
       if (rows[rowId].selected && this.props.onRowChange)
           this.props.onRowChange(row);
 
@@ -71,7 +72,6 @@ export default class EditTable extends React.Component {
             { 
                 headerColumns.map((header, id) => {
                     const width = header.width
-                    console.log('header:', header);
 
                     let cellStyle = {
                       display: 'flex',
@@ -84,7 +84,6 @@ export default class EditTable extends React.Component {
                       width: width || 200
                     }
 
-                    console.log('this.props.sortBy:', this.props.sortBy);
                     if (this.props.sortBy == header.field)
                         cellStyle.background = "#aaa";
 
@@ -119,7 +118,6 @@ export default class EditTable extends React.Component {
     }
 
     const rows = this.state.rows
-    console.log('rendering...');
 
     return (
       <div className='container' style={style}>

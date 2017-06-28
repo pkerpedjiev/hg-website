@@ -12,7 +12,8 @@ export default class DatasetsList extends React.Component {
         super(props)
 
         // the servers supplying tileset data
-        this.trackSourceServers = new Set(["http://higlass.io/api/v1"]);
+        //this.trackSourceServers = new Set(["http://higlass.io/api/v1"]);
+        this.trackSourceServers = new Set(["http://127.0.0.1:8000/api/v1"]);
         this.serverDataPositions = {};
         this.serverDataCounts = {};
 
@@ -178,8 +179,6 @@ export default class DatasetsList extends React.Component {
          */
 
         let maxDataCount = dictValues(this.serverDataCounts).reduce((a,b) => a+b, 0);
-        console.log('maxDataCount:', maxDataCount);
-
 
         // fetch the next page, we should always be two pages ahead
         this.requestTilesetLists(this.state.currentDataPosition + this.pageSize);
@@ -217,8 +216,6 @@ export default class DatasetsList extends React.Component {
        *
        *  nothing
        */
-      console.log('sort by:', columnName);
-
       // if someone clicks the column currently being sorted by,
       // undo sorting
       if (columnName == this.state.sortBy)
@@ -240,8 +237,6 @@ export default class DatasetsList extends React.Component {
          *  newValue: string
          *      The new value of the text field.
          */
-        console.log('newValue:', newValue);
-        console.log('this:', this);
         this.searchValue = newValue;
 
         // clear all previously retrieved tilesets
@@ -253,13 +248,26 @@ export default class DatasetsList extends React.Component {
         this.requestTilesetLists(0);
     }
 
-    render() {
-        console.log('currentDataPosition:', this.state.currentDataPosition);
-        console.log('this.state.tilesets:', this.state.tilesets);
+    handleRowChange(row) {
+        /**
+         * A row was changed in the editable table.
+         *
+         * We need to update the server.
+         *
+         * Arguments:
+         *  row: {columns: Array(3), id: 0, selected: true}
+         *
+         *  Where each column is an object like this: { header: null, value: "blah" ...}
+         *
+         *  The object value names need to come from somewhere else.
+         */
+        console.log('handleRowChange row:', row);
 
+    }
+
+    render() {
         let datasets1 = dictValues(this.state.tilesets)
         .filter(x => {
-            console.log('x:', x);
             if (this.searchValue.length)
                 return x.name.toLowerCase().includes(this.searchValue.toLowerCase());
             return true;
@@ -271,13 +279,6 @@ export default class DatasetsList extends React.Component {
                                        .localeCompare(b[this.state.sortBy.toLowerCase()]));
 
         datasets1 = datasets1.slice(this.state.currentDataPosition, this.state.currentDataPosition + this.pageSize)
-        .map(x => {
-            return {"columns": [{"value": x.uuid}, {"value": x.name}, {"value": x.datatype}]}; 
-        })
-
-
-        console.log('this.state.tilesets:', this.state.tilesets);
-        console.log('datasets:', datasets1);
 
         const headers = [
             {value: 'UID', field: 'uuid', type: 'TextField', width: 100},
@@ -296,6 +297,7 @@ export default class DatasetsList extends React.Component {
                         </TextField>
                 <EditTable
                     rows={ datasets1 }
+                    onRowChange={ this.handleRowChange }
                     sortyBy={this.state.sortBy}
                     headerColumns={headers}
                     onSortBy={this.handleSortBy.bind(this)}

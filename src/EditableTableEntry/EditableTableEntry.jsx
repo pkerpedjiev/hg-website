@@ -4,50 +4,72 @@ import ModeEdit from 'material-ui/svg-icons/editor/mode-edit';
 import {IconButton, Toggle, TextField, DatePicker} from 'material-ui';
 
 export default class EditableTableEntry extends React.Component {
-  getCellValue(cell) {
-    const id = cell && cell.id
-    const type = this.props.headerColumns.map((header) => {
-      return header.type
-    })[id]
-    const selected = cell && cell.selected
-    const value = cell && cell.value
-    const rowId = cell && cell.rowId
-    const header = cell && cell.header
-    const width = cell && cell.width
-    const textFieldId = [id, rowId, header, 'text'].join('-')
-    const datePickerId = [id, rowId, header, 'date'].join('-')
+    constructor(props) {
+        super(props);
+
+        console.log('props:', this.props);
+
+        let columnValues = {};
+
+        for (let column of this.props.headerColumns) {
+            columnValues[column.field] = this.props.row[column.field];
+        }
+
+        this.state = {
+            columnValues : columnValues
+        }
+    }
+
+  getCellValue(column) {
+    const type = column.type;
+    const value = this.state.columnValues[column.field];
+    const textFieldId = column.field;
+    const datePickerId = column.field;
 
     const textFieldStyle = {
-      width: width
+      width: column.width
     }
 
     const datePickerStyle = {
-      width: width
+      width: column.width
     }
 
     const onTextFieldChange = (e) => {
+        /*
       const target = e.target
       const value = target.value
       var rows = this.state.rows
       rows[rowId].columns[id].value = value
       this.setState({rows: rows})
+      */
+     console.log('e.target.value:', e.target.value);
+        let columnValues = this.state.columnValues;
+        columnValues[column.field] = e.target.value;
+
+        this.setState({ columnValues: columnValues});
     }
 
     const onDatePickerChange = (e, date) => {
+        /*
       var rows = this.state.rows
       rows[rowId].columns[id].value = date
       this.setState({rows: rows})
+      */
     }
 
     const onToggle = (e) => {
+        /*
       var rows = this.state.rows
       rows[rowId].columns[id].value = !rows[rowId].columns[id].value
       this.setState({rows: rows})
+      */
     }
 
-    if (header || (type && type === 'ReadOnly')) {
+    if (this.props.row.header || (type && type === 'ReadOnly')) {
       return <p style={{color: '#888'}}>{value}</p>
     }
+
+    let selected = this.props.row.selected;
 
     if (type) {
       if (selected) {
@@ -127,26 +149,20 @@ export default class EditableTableEntry extends React.Component {
     return (
       <div key={rowKey} className='row' style={rowStyle}>
         {checkbox}
-        {columns.map((column, id) => {
-          const width = this.props.headerColumns.map((header) => {
-            return (header && header.width) || false
-          })[id]
-          const cellStyle = {
-            display: 'flex',
-            flexFlow: 'row nowrap',
-            flexGrow: 0.15,
-            flexBasis: 'content',
-            alignItems: 'center',
-            padding: '5px',
-            height: 30,
-            width: width || 200
-          }
-          const columnKey = ['column', id].join('-')
-          column.selected = selected
-          column.rowId = rowId
-          column.id = id
-          column.header = row.header
-          column.width = cellStyle.width
+        {this.props.headerColumns.map((column) => {
+              const cellStyle = {
+                display: 'flex',
+                flexFlow: 'row nowrap',
+                flexGrow: 0.15,
+                flexBasis: 'content',
+                alignItems: 'center',
+                padding: '5px',
+                height: 30,
+                width: column.width || 200
+              }
+
+          const columnKey = column.field;
+
           return (
             <div key={columnKey} className='cell' style={cellStyle}>
               <div>
