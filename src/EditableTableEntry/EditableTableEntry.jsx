@@ -12,7 +12,7 @@ export default class EditableTableEntry extends React.Component {
         let columnValues = {};
 
         for (let column of this.props.headerColumns) {
-            columnValues[column.field] = this.props.row[column.field];
+            columnValues[column.field] = this.props.row.entry[column.field];
         }
 
         this.state = {
@@ -42,7 +42,6 @@ export default class EditableTableEntry extends React.Component {
       rows[rowId].columns[id].value = value
       this.setState({rows: rows})
       */
-     console.log('e.target.value:', e.target.value);
         let columnValues = this.state.columnValues;
         columnValues[column.field] = e.target.value;
 
@@ -65,7 +64,7 @@ export default class EditableTableEntry extends React.Component {
       */
     }
 
-    if (this.props.row.header || (type && type === 'ReadOnly')) {
+    if (this.props.row.entry.header || (type && type === 'ReadOnly')) {
       return <p style={{color: '#888'}}>{value}</p>
     }
 
@@ -108,6 +107,20 @@ export default class EditableTableEntry extends React.Component {
     />
   }
 
+  handleRowClick(e) {
+      /**
+       * A row has changed, update its value and call the parent
+       * handler.
+       */
+      let newRow = JSON.parse(JSON.stringify(this.props.row));
+
+      for (let column of this.props.headerColumns) {
+        newRow.entry[column.field] = this.state.columnValues[column.field];
+      }
+
+      this.props.onRowClick(newRow);
+  }
+
   render() {
     let row = this.props.row;
 
@@ -131,7 +144,6 @@ export default class EditableTableEntry extends React.Component {
 
     const rowId = row.id
     const rowKey = ['row', rowId].join('-')
-
     const selected = (row && row.selected) || false
 
     const button = selected ? <Check /> : <ModeEdit />
@@ -139,7 +151,7 @@ export default class EditableTableEntry extends React.Component {
 
     const checkbox = row.header ? <div style={checkboxStyle} />
     : <IconButton 
-        onClick={this.props.onRowClick}
+        onClick={this.handleRowClick.bind(this)}
         style={checkboxStyle} 
         tooltip={tooltip} 
       >

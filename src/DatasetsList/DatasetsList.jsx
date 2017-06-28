@@ -68,14 +68,15 @@ export default class DatasetsList extends React.Component {
         let allTilesets = existingTilesets;
 
         let entries = newEntries.map(ne => {
-            let ane = Object.assign({}, ne, {
+            let ane = {
                 server: sourceServer,
                 tilesetUid: ne.uuid,
                 serverUidKey: this.serverUidKey(sourceServer, ne.uuid),
                 datatype: ne.datatype,
                 name: ne.name,
-                uid: slugid.nice()
-            });
+                uid: slugid.nice(),
+                entry: ne
+            };
 
             return ane;
         });

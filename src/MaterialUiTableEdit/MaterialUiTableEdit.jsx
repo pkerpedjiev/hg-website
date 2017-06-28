@@ -128,7 +128,7 @@ export default class EditTable extends React.Component {
                 key={row.id}
                 headerColumns={this.props.headerColumns}
                 row={row} 
-                onRowClick={() => this.handleRowClick(row)}
+                onRowClick={this.handleRowClick.bind(this)}
             />)
         })}
       </div>
