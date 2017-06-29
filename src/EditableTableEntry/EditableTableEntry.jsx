@@ -124,7 +124,6 @@ export default class EditableTableEntry extends React.Component {
   render() {
     let row = this.props.row;
 
-    const columns = row.columns
     const rowStyle = {
         //width: '100%',
       display: 'flex',

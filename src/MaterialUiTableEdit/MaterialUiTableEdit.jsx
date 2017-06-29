@@ -84,7 +84,7 @@ export default class EditTable extends React.Component {
                       width: width || 200
                     }
 
-                    if (this.props.sortBy == header.field)
+                    if (this.props.sortBy === header.field)
                         cellStyle.background = "#aaa";
 
                     return (

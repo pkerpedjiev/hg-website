@@ -19,6 +19,12 @@ export default class DatasetsList extends React.Component {
 
         this.pageSize = 10;
 
+        this.headers = [
+            {value: 'UID', field: 'uuid', type: 'TextField', width: 100},
+            {value: 'Name', field: 'name', type: 'TextField', width: 300},
+            {value: 'Datatype', field: 'datatype', type: 'TextField', width: 100}
+        ]
+
         // how many entries we've received from each server so far
         // necessary for pagination
         for (let server of this.trackSourceServers) {
@@ -31,6 +37,13 @@ export default class DatasetsList extends React.Component {
         this.requestTilesetLists(this.pageSize);
 
         this.searchValue = "";
+
+        //let targetUrl = row.server + "/tilesets/" + newEntry.uuid + "/"
+        let targetUrl = "http://127.0.0.1:8000/api/v1/tilesets/aa/"
+        json(targetUrl, function(error, data) {
+            console.log('error:', error.target.response);
+            console.log('data:', data);
+        });
 
         this.state = {
             tilesets: [],
@@ -219,7 +232,7 @@ export default class DatasetsList extends React.Component {
        */
       // if someone clicks the column currently being sorted by,
       // undo sorting
-      if (columnName == this.state.sortBy)
+      if (columnName === this.state.sortBy)
           columnName = null;
 
       this.setState({
@@ -263,7 +276,14 @@ export default class DatasetsList extends React.Component {
          *  The object value names need to come from somewhere else.
          */
         console.log('handleRowChange row:', row);
+        let newEntry = {};
 
+        for (let header of this.headers) {
+            newEntry[header.field] = row.entry[header.field];
+        }
+
+
+        console.log('newEntry:', newEntry);
     }
 
     render() {
@@ -281,12 +301,6 @@ export default class DatasetsList extends React.Component {
 
         datasets1 = datasets1.slice(this.state.currentDataPosition, this.state.currentDataPosition + this.pageSize)
 
-        const headers = [
-            {value: 'UID', field: 'uuid', type: 'TextField', width: 100},
-            {value: 'Name', field: 'name', type: 'TextField', width: 300},
-            {value: 'Datatype', field: 'datatype', type: 'TextField', width: 100}
-        ]
-
         return(
             <div>
                         <TextField 
@@ -298,9 +312,9 @@ export default class DatasetsList extends React.Component {
                         </TextField>
                 <EditTable
                     rows={ datasets1 }
-                    onRowChange={ this.handleRowChange }
+                    onRowChange={ this.handleRowChange.bind(this) }
                     sortyBy={this.state.sortBy}
-                    headerColumns={headers}
+                    headerColumns={this.headers}
                     onSortBy={this.handleSortBy.bind(this)}
                     sortBy={this.state.sortBy}
                 />
