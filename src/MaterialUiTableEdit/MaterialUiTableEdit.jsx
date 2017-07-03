@@ -27,10 +27,10 @@ export default class EditTable extends React.Component {
       var rows = this.state.rows
       const rowId = row.id;
 
-      console.log('row clicked:', row);
-
       if (rows[rowId].selected && this.props.onRowChange)
           this.props.onRowChange(row);
+      else
+          this.props.onRowSelected(row);
 
       rows.forEach((row, i) => {
         if (rowId !== i) row.selected = false

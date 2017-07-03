@@ -1,5 +1,5 @@
 import React from 'react'
-import {json} from 'd3-request';
+import {json,request} from 'd3-request';
 import slugid from 'slugid';
 import {dictValues} from '../utils';
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
@@ -16,6 +16,8 @@ export default class DatasetsList extends React.Component {
         this.trackSourceServers = new Set(["http://127.0.0.1:8000/api/v1"]);
         this.serverDataPositions = {};
         this.serverDataCounts = {};
+
+        this.rowsBeforeEditing = {};
 
         this.pageSize = 10;
 
@@ -38,14 +40,9 @@ export default class DatasetsList extends React.Component {
 
         this.searchValue = "";
 
-        //let targetUrl = row.server + "/tilesets/" + newEntry.uuid + "/"
-        let targetUrl = "http://127.0.0.1:8000/api/v1/tilesets/aa/"
-        json(targetUrl, function(error, data) {
-            console.log('error:', error.target.response);
-            console.log('data:', data);
-        });
-
         this.state = {
+            updatingRow: false,
+            errorMessage: "",
             tilesets: [],
             currentDataPosition: 0,
             sortBy: null
@@ -262,6 +259,22 @@ export default class DatasetsList extends React.Component {
         this.requestTilesetLists(0);
     }
 
+    handleRowSelected(row) {
+        /**
+         * A row has been selected in the editable table. When someone
+         * is done editing it, they will click on "done" and handleRowChange
+         * will be called.
+         *
+         * This function should never be called while another row
+         * is being updated on the server.
+         *
+         * Arguments:
+         *  row: {server: "127.0.0.1/api/v1", entry: ...}
+         */
+
+        this.rowsBeforeEditing[row.serverUidKey] = JSON.parse(JSON.stringify(row.entry));
+    }
+
     handleRowChange(row) {
         /**
          * A row was changed in the editable table.
@@ -275,19 +288,60 @@ export default class DatasetsList extends React.Component {
          *
          *  The object value names need to come from somewhere else.
          */
-        console.log('handleRowChange row:', row);
         let newEntry = {};
 
         for (let header of this.headers) {
             newEntry[header.field] = row.entry[header.field];
         }
 
+        //let targetUrl = "http://127.0.0.1:8000/api/v1/tilesets/aa/"
+        let targetUrl = row.server + "/tilesets/" + newEntry.uuid + "/"
 
-        console.log('newEntry:', newEntry);
+        request(targetUrl)
+        .header("Content-Type", "application/json")
+        .header('Authorization', 'JWT ' + localStorage.getItem('id_token'))
+        .send('PATCH', JSON.stringify(newEntry), function(error, data) {
+            if (error && error.target) {
+                let tilesets = this.state.tilesets;
+                let changedTileset = tilesets[row.serverUidKey];
+
+                changedTileset.entry = this.rowsBeforeEditing[row.serverUidKey];
+
+                this.setState({
+                    tilesets: tilesets,
+                    loading: false,
+                    errorMessage: error.target.response
+                });
+            } else {
+                let tilesets = this.state.tilesets;
+                let changedTileset = tilesets[row.serverUidKey];
+
+                changedTileset.entry = row.entry;
+
+                this.setState({
+                    tilesets:  tilesets,
+                    loading: false
+                });
+            }
+
+        }.bind(this));
+
+        // assume the request is going to succeed and switch to the
+        // new (edited) tileset
+        let tilesets = this.state.tilesets;
+        let changedTileset = tilesets[row.serverUidKey];
+
+        changedTileset.entry = row.entry;
+
+        this.setState({
+            tilesets:  tilesets,
+        });
+
     }
 
     render() {
         let datasets1 = dictValues(this.state.tilesets)
+
         .filter(x => {
             if (this.searchValue.length)
                 return x.name.toLowerCase().includes(this.searchValue.toLowerCase());
@@ -313,6 +367,7 @@ export default class DatasetsList extends React.Component {
                 <EditTable
                     rows={ datasets1 }
                     onRowChange={ this.handleRowChange.bind(this) }
+                    onRowSelected={ this.handleRowSelected.bind(this) }
                     sortyBy={this.state.sortBy}
                     headerColumns={this.headers}
                     onSortBy={this.handleSortBy.bind(this)}
@@ -338,6 +393,9 @@ export default class DatasetsList extends React.Component {
                         onClick={this.handleNextPage.bind(this)}
                         className={"navigation-button"}
                     />
+                    { this.state.updatingRow ? "Updating" : "Not updating" }
+                    <br />
+                    { "Error: " + this.state.errorMessage }
                 </div>
             </div>
         );

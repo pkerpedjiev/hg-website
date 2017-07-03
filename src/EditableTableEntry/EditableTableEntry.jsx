@@ -7,8 +7,6 @@ export default class EditableTableEntry extends React.Component {
     constructor(props) {
         super(props);
 
-        console.log('props:', this.props);
-
         let columnValues = {};
 
         for (let column of this.props.headerColumns) {
@@ -121,6 +119,17 @@ export default class EditableTableEntry extends React.Component {
       this.props.onRowClick(newRow);
   }
 
+  componentWillReceiveProps(nextProps) {
+      let columnValues = this.state.columnValues;
+    for (let column of nextProps.headerColumns) {
+        columnValues[column.field] = nextProps.row.entry[column.field];
+    }
+
+    this.setState({
+        columnValues: columnValues
+    });
+  }
+
   render() {
     let row = this.props.row;
 
@@ -147,6 +156,8 @@ export default class EditableTableEntry extends React.Component {
 
     const button = selected ? <Check /> : <ModeEdit />
     const tooltip = selected ? 'Done' : 'Edit'
+
+    console.log('row:', this.props.row);
 
     const checkbox = row.header ? <div style={checkboxStyle} />
     : <IconButton 
