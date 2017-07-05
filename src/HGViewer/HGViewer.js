@@ -1,7 +1,7 @@
 import React from 'react';
 import {json} from 'd3-request';
 import {HiGlassComponent} from 'higlass';
-import 'higlass/dist/higlass.css';
+import 'higlass/dist/styles/hglib.css';
 
 export default class HGViewer extends React.Component {
     constructor(props) {
