@@ -1,8 +1,9 @@
+import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import { makeMainRoutes } from './routes';
+import AllRoutes from './routes';
 
-const routes = makeMainRoutes();
+//const routes = makeMainRoutes();
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
@@ -11,6 +12,6 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
 
 ReactDOM.render(
-  routes,
+  <AllRoutes />,
   document.getElementById('root')
 );
