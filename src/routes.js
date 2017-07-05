@@ -23,9 +23,19 @@ export default class AllRoutes extends React.Component {
 
         this.state = {
             settings: { 
-                trackSourceServers: ['http://127.0.0.1:8000/api/v1']
+                trackSourceServers: new Set(['http://127.0.0.1:8000/api/v1'])
             }
         }
+    }
+
+    handleAddTrackSourceServer(serverUrl) {
+        console.log('serverUrl:', serverUrl);
+        let settings = this.state.settings;
+        settings.trackSourceServers.add(serverUrl);
+
+        this.setState({
+            settings: settings
+        });
     }
 
     render() {
@@ -40,6 +50,7 @@ export default class AllRoutes extends React.Component {
                   <SettingsComponent 
                     auth={auth} 
                     settings={this.state.settings}
+                    onAddTrackSourceServer={this.handleAddTrackSourceServer.bind(this)}
                     {...props} 
                     onSettingsChanged={() => { console.log("hi") }} />} />
               <Route path="/login" render={(props) => {

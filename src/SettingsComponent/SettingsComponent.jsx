@@ -12,8 +12,8 @@ export default class SettingsComponent extends React.Component {
         super(props);
 
         this.state = {
-            settings: props.settings,
-            addingServer: false
+            addingServer: true,
+            serverFieldText: ''
         }
     }
 
@@ -33,6 +33,12 @@ export default class SettingsComponent extends React.Component {
         }
     }
 
+    handleServerFieldChange(e) {
+        this.setState({
+            serverFieldText: e.target.value 
+        });
+    }
+
     handleOpenAddServerMenu(event) {
         this.setState({
             addingServer: true,
@@ -46,13 +52,31 @@ export default class SettingsComponent extends React.Component {
         });
     }
 
+    focusTextField(input) {
+        console.log('input:', input);
+        if (input) {
+            input.focus();
+            //setTimeout(() => { input.focus()}, 100 )
+        }
+    }
+
+    handleAddTrackSourceServer(serverUrl) {
+        this.props.onAddTrackSourceServer(this.state.serverFieldText);
+
+        this.setState({
+            serverFieldText: '',
+            addingServer: false
+        });
+    }
+
     render() {
-        console.log('anchroEl:', this.state.anchorEl);
-        console.log('open', this.state.open);
+        console.log('addingServer:', this.state.addingServer);
+        console.log('a:', [...this.props.settings.trackSourceServers].map(server => server));
+
         return (
             <div>
                 <ul>
-                    { this.state.settings.trackSourceServers.map(server =>
+                    { [...this.props.settings.trackSourceServers].map(server =>
                         (<li key={server}> {server} </li>))
                     }
                 </ul>
@@ -67,15 +91,23 @@ export default class SettingsComponent extends React.Component {
                         targetOrigin={{horizontal: 'left', vertical: 'top'}}
                         onRequestClose={this.handleRequestClose.bind(this)}
                     >
-                        <Menu>
+                        <Menu
+                            disableAutoFocus={true}
+                        >
+
                             <MenuItem>
                                 <Toolbar>
                                     <ToolbarGroup firstChild={true}>
-                                        <TextField hintText="http://higlass.io/api/v1" />
+                                        <TextField 
+                                            ref={this.focusTextField}
+                                            hintText="http://127.0.0.1:8989/api/v1" 
+                                            onChange={this.handleServerFieldChange.bind(this)}
+                                            value={this.state.serverFieldText}
+                                        />
                                     </ToolbarGroup>
                                     <ToolbarGroup>
                                         <RaisedButton
-                                            onTouchTap={this.handleAddServer}
+                                            onTouchTap={this.handleAddTrackSourceServer.bind(this)}
                                             label={"Add"}
                                         />
                                     </ToolbarGroup>
