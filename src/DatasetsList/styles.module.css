@@ -1,0 +1,12 @@
+@import url('https://fonts.googleapis.com/css?family=Hind:400,600');
+
+.navigation-button {
+    opacity: 0.4;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.navigation-button:hover {
+    opacity: 0.9
+}
+

@@ -1,6 +1,12 @@
+yarn.lock
 node_modules/
 .env
 npm-debug.log
 dist
 *.un~
 *.swp
+*.swo
+*.swn
+build
+dist.zip
+.DS_Store

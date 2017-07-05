@@ -1,18 +1,30 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
+import React, { Component } from 'react';
+import './App.css';
+import Nav from './Nav/Nav.js';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
-import 'bootstrap/dist/css/bootstrap.css'
-import './app.css'
+class App extends Component {
+  goTo(route) {
+    this.props.history.replace(`/${route}`)
+  }
 
-import App from 'containers/App/App'
+  login() {
+    this.props.auth.login();
+  }
 
-import {browserHistory} from 'react-router'
-import makeRoutes from './routes'
+  logout() {
+    this.props.auth.logout();
+  }
 
-const routes = makeRoutes()
+  render() {
+    return (
+        <MuiThemeProvider>
+            <div>
+                <Nav auth={this.props.auth}/>
+            </div>
+        </MuiThemeProvider>
+    );
+  }
+}
 
-const mountNode = document.querySelector('#root');
-ReactDOM.render(
-  <App history={browserHistory}
-        routes={routes} />,
-mountNode);
+export default App;
