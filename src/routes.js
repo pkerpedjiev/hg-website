@@ -28,6 +28,25 @@ export default class AllRoutes extends React.Component {
         }
     }
 
+    handleRemoveTrackSourceServer(serverUrl) {
+        /**
+         * Remove a track source server from the list of available servers
+         *
+         * Arguments
+         * ---------
+         *  serverUrl: string
+         *      The url of the server to remove
+         */
+        console.log('removing server', serverUrl);
+
+        let settings = this.state.settings;
+        settings.trackSourceServers.delete(serverUrl);
+
+        this.setState({
+            settings: settings
+        });
+    }
+
     handleAddTrackSourceServer(serverUrl) {
         console.log('serverUrl:', serverUrl);
         let settings = this.state.settings;
@@ -36,6 +55,14 @@ export default class AllRoutes extends React.Component {
         this.setState({
             settings: settings
         });
+    }
+
+    updateLocalSettings() {
+        /**
+         * Save the current settings to localStorage so that if the user
+         * leaves the current page, they'll be able to come back and have
+         * the same settings they previously had.
+         */
     }
 
     render() {
@@ -51,6 +78,7 @@ export default class AllRoutes extends React.Component {
                     auth={auth} 
                     settings={this.state.settings}
                     onAddTrackSourceServer={this.handleAddTrackSourceServer.bind(this)}
+                    onRemoveTrackSourceServer={this.handleRemoveTrackSourceServer.bind(this)}
                     {...props} 
                     onSettingsChanged={() => { console.log("hi") }} />} />
               <Route path="/login" render={(props) => {

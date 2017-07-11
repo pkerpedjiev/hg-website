@@ -1,19 +1,22 @@
-import React from 'react';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import FontIcon from 'material-ui/FontIcon';
 import Popover from 'material-ui/Popover';
+import React from 'react';
 import MenuItem from 'material-ui/MenuItem';
 import Menu from 'material-ui/Menu';
 import TextField from 'material-ui/TextField';
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
 import RaisedButton from 'material-ui/RaisedButton';
+import {json} from 'd3-request';
 
 export default class SettingsComponent extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            addingServer: true,
-            serverFieldText: ''
+            addingServer: false,
+            serverFieldText: 'http://127.0.0.1:8989/api/v1',
+            serverError: null
         }
     }
 
@@ -61,11 +64,25 @@ export default class SettingsComponent extends React.Component {
     }
 
     handleAddTrackSourceServer(serverUrl) {
-        this.props.onAddTrackSourceServer(this.state.serverFieldText);
+        let targetUrl = this.state.serverFieldText + '/tilesets';
+        
+        json(targetUrl, (error, result) => {
+            if (error) {
+                console.log('error:', error)
+                this.setState({
+                    serverError: "Invalid server"
+                });
 
-        this.setState({
-            serverFieldText: '',
-            addingServer: false
+            } else {
+                console.log('result:', result);
+                this.props.onAddTrackSourceServer(this.state.serverFieldText);
+
+                this.setState({
+                    serverError: "",
+                    serverFieldText: '',
+                    addingServer: false
+                });
+            }
         });
     }
 
@@ -77,7 +94,18 @@ export default class SettingsComponent extends React.Component {
             <div>
                 <ul>
                     { [...this.props.settings.trackSourceServers].map(server =>
-                        (<li key={server}> {server} </li>))
+                        (<li key={server}> 
+                            
+                            {server} 
+
+                                <FontIcon 
+                                    className="material-icons"
+                                    onClick={() => this.props.onRemoveTrackSourceServer(server)}
+                                >
+                                    clear
+                                </FontIcon>
+                            
+                            </li>))
                     }
                 </ul>
                 <RaisedButton
@@ -99,6 +127,7 @@ export default class SettingsComponent extends React.Component {
                                 <Toolbar>
                                     <ToolbarGroup firstChild={true}>
                                         <TextField 
+                                            errorText={this.state.serverError}
                                             ref={this.focusTextField}
                                             hintText="http://127.0.0.1:8989/api/v1" 
                                             onChange={this.handleServerFieldChange.bind(this)}
