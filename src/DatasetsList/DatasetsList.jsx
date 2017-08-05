@@ -13,7 +13,7 @@ export default class DatasetsList extends React.Component {
 
         // the servers supplying tileset data
         //this.trackSourceServers = new Set(["http://higlass.io/api/v1"]);
-        this.trackSourceServers = new Set(["http://127.0.0.1:8000/api/v1"]);
+        this.trackSourceServers = new Set(["http://higlass.io/api/v1"]);
         this.serverDataPositions = {};
         this.serverDataCounts = {};
 
