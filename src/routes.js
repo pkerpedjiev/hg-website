@@ -23,7 +23,8 @@ export default class AllRoutes extends React.Component {
 
         this.state = {
             settings: { 
-                trackSourceServers: new Set(['http://127.0.0.1:8000/api/v1'])
+                trackSourceServers: new Set(['http://127.0.0.1:8000/api/v1',
+                                            'http://higlass.io/api/v1'])
             }
         }
     }
@@ -72,7 +73,11 @@ export default class AllRoutes extends React.Component {
               <Route path="/" render={(props) => <App auth={auth} {...props} />} />
               <Route path="/home" render={(props) => <Home auth={auth} {...props} />} />
               <Route path="/viewer" render={(props) => <HGViewer auth={auth} {...props} />} />
-              <Route path="/datasets" render={(props) => <DatasetsList auth={auth} {...props} />} />
+              <Route path="/datasets" render={(props) => 
+                  <DatasetsList auth={auth} 
+                      trackSourceServers={this.state.settings.trackSourceServers}
+                      {...props} 
+                    />} />
               <Route path="/settings" render={(props) => 
                   <SettingsComponent 
                     auth={auth} 

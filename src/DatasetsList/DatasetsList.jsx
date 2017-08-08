@@ -5,6 +5,12 @@ import {dictValues} from '../utils';
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import EditTable from '../MaterialUiTableEdit/MaterialUiTableEdit.jsx';
 import TextField from 'material-ui/TextField';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
+import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
+
+
+
 import './styles.module.css';
 
 export default class DatasetsList extends React.Component {
@@ -13,7 +19,6 @@ export default class DatasetsList extends React.Component {
 
         // the servers supplying tileset data
         //this.trackSourceServers = new Set(["http://higlass.io/api/v1"]);
-        this.trackSourceServers = new Set(["http://higlass.io/api/v1"]);
         this.serverDataPositions = {};
         this.serverDataCounts = {};
 
@@ -24,12 +29,13 @@ export default class DatasetsList extends React.Component {
         this.headers = [
             {value: 'UID', field: 'uuid', type: 'TextField', width: 100},
             {value: 'Name', field: 'name', type: 'TextField', width: 300},
-            {value: 'Datatype', field: 'datatype', type: 'TextField', width: 100}
+            {value: 'Datatype', field: 'datatype', type: 'TextField', width: 100},
+            {value: 'Created', field: 'created', type: 'TextField', width: 200}
         ]
 
         // how many entries we've received from each server so far
         // necessary for pagination
-        for (let server of this.trackSourceServers) {
+        for (let server of this.props.trackSourceServers) {
             this.serverDataPositions[server] = 0;
             this.serverDataCounts[server] = 0;
         }
@@ -45,7 +51,7 @@ export default class DatasetsList extends React.Component {
             errorMessage: "",
             tilesets: [],
             currentDataPosition: 0,
-            sortBy: null
+            sortBy: 'name|desc'
         }
     }
     prepareNewEntries(sourceServer, newEntries, existingTilesets) {
@@ -78,6 +84,8 @@ export default class DatasetsList extends React.Component {
         let allTilesets = existingTilesets;
 
         let entries = newEntries.map(ne => {
+            console.log('ne:', ne);
+
             let ane = {
                 server: sourceServer,
                 tilesetUid: ne.uuid,
@@ -85,6 +93,7 @@ export default class DatasetsList extends React.Component {
                 datatype: ne.datatype,
                 name: ne.name,
                 uid: slugid.nice(),
+                created: ne.created,
                 entry: ne
             };
 
@@ -131,14 +140,31 @@ export default class DatasetsList extends React.Component {
         let sent = 0;
         let finished = 0;
 
-        this.trackSourceServers.forEach( sourceServer => {
+        this.props.trackSourceServers.forEach( sourceServer => {
             sent += 1;
             let targetUrl = sourceServer + '/tilesets/?limit=' + this.pageSize + "&offset=" + offset
 
             if (this.searchValue && this.searchValue.length > 0)
                 targetUrl += "&ac=" + this.searchValue;
-            if (sortBy)
-                targetUrl += "&s=" + sortBy;
+
+            console.log('sortBy:', sortBy);
+            if (sortBy) {
+                // sortby definitions are of the form "created|asc" or "created|desc"
+                // the 'asc' or 'desc' indicates ascending or descending
+                let parts = sortBy.split('|');
+                let first = parts.slice(0,parts.length-1).join('|');
+                let second = parts.slice(parts.length-1, parts.length);
+
+                console.log('first:', first);
+                console.log('second:', second);
+
+                targetUrl += "&s=" + first;
+
+                if (second == 'desc')
+                    targetUrl += "&r=";
+            }
+
+            console.log('targetUrl:', targetUrl);
 
             json(targetUrl,
                  function(error, data) {
@@ -211,7 +237,7 @@ export default class DatasetsList extends React.Component {
         });
     }
 
-  handleSortBy(columnName) {
+  handleSortBy(evt, index, columnName) {
       /**
        * The user has chosen a sort order. This is usually
        * accomplished by clicking on one of the columns
@@ -229,6 +255,7 @@ export default class DatasetsList extends React.Component {
        */
       // if someone clicks the column currently being sorted by,
       // undo sorting
+
       if (columnName === this.state.sortBy)
           columnName = null;
 
@@ -348,15 +375,30 @@ export default class DatasetsList extends React.Component {
             return true;
         })
 
-        if (this.state.sortBy)
-            datasets1 = datasets1.sort((a,b) => 
-                                       a[this.state.sortBy.toLowerCase()]
-                                       .localeCompare(b[this.state.sortBy.toLowerCase()]));
+        if (this.state.sortBy) {
+            let parts = this.state.sortBy.split('|');
+            let first = parts.slice(0,parts.length-1).join('|');
+            let second = parts.slice(parts.length-1, parts.length);
+
+            if (second == 'desc') {
+                datasets1 = datasets1.sort((a,b) => 
+                                           -a[first.toLowerCase()]
+                                           .localeCompare(b[first.toLowerCase()]));
+            } else {
+                datasets1 = datasets1.sort((a,b) => 
+                                           a[first.toLowerCase()]
+                                           .localeCompare(b[first.toLowerCase()]));
+            }
+        }
 
         datasets1 = datasets1.slice(this.state.currentDataPosition, this.state.currentDataPosition + this.pageSize)
 
         return(
             <div>
+                <Toolbar>
+                    <ToolbarGroup
+                        firstChild={true}
+                    >
                         <TextField 
                             style={{ "display" : "block", "margin": "auto", "marginBottom": "10px" }}
                             hintText=""
@@ -364,6 +406,30 @@ export default class DatasetsList extends React.Component {
                             onChange={this.handleFilterChanged.bind(this)}
                         >
                         </TextField>
+
+                        <SelectField
+                            floatingLabelText={"Sort by"}
+                            value={this.state.sortBy}
+                            onChange={this.handleSortBy.bind(this)}
+                        >
+                            { 
+                                this.headers.map(x => {
+                                console.log('x:', x);
+                                    return [(<MenuItem 
+                                                value={x.field + "|asc"}
+                                                key={x.field + "-asc"}
+                                                primaryText={x.value + " Ascending"}
+                                            />),(<MenuItem 
+                                                value={x.field + "|desc"}
+                                                key={x.field + "-desc"}
+                                                primaryText={x.value + " Descending"}
+                                            />)
+                                            ]
+                                })
+                            }
+                        </SelectField>
+                    </ToolbarGroup>
+                </Toolbar>
                 <EditTable
                     rows={ datasets1 }
                     onRowChange={ this.handleRowChange.bind(this) }
