@@ -119,7 +119,22 @@ export default class EditTable extends React.Component {
       fontFamily: 'Roboto, sans-serif'
     }
 
-    const rows = this.state.rows
+
+    let rows = this.state.rows;
+
+    if (!this.props.loaded) {
+        // create dummy rows
+        rows = [];
+        for (let i = 0; i < this.props.maxRows; i++) {
+            let row = {entry: {}};
+
+            for (let headerColumn of this.props.headerColumns) {
+                row.entry[headerColumn.field] = '';
+            }
+
+            rows.push(row);
+        }
+    }
 
     return (
       <div className='container' style={style}>

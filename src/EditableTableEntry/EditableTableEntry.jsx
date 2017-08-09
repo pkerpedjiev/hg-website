@@ -157,8 +157,6 @@ export default class EditableTableEntry extends React.Component {
     const button = selected ? <Check /> : <ModeEdit />
     const tooltip = selected ? 'Done' : 'Edit'
 
-    console.log('row:', this.props.row);
-
     const checkbox = row.header ? <div style={checkboxStyle} />
     : <IconButton 
         onClick={this.handleRowClick.bind(this)}

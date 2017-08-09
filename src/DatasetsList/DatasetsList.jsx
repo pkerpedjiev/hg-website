@@ -25,6 +25,8 @@ export default class DatasetsList extends React.Component {
         this.rowsBeforeEditing = {};
 
         this.pageSize = 10;
+        this.sent = 0;
+        this.finished = 0;
 
         this.headers = [
             {value: 'UID', field: 'uuid', type: 'TextField', width: 100},
@@ -41,8 +43,6 @@ export default class DatasetsList extends React.Component {
         }
 
         // fetch the first two pages of results
-        this.requestTilesetLists(0);
-        this.requestTilesetLists(this.pageSize);
 
         this.searchValue = "";
 
@@ -53,6 +53,9 @@ export default class DatasetsList extends React.Component {
             currentDataPosition: 0,
             sortBy: 'name|desc'
         }
+
+        this.requestTilesetLists(0, this.state.sortBy);
+        this.requestTilesetLists(this.pageSize, this.state.sortBy);
     }
     prepareNewEntries(sourceServer, newEntries, existingTilesets) {
         /**
@@ -84,8 +87,6 @@ export default class DatasetsList extends React.Component {
         let allTilesets = existingTilesets;
 
         let entries = newEntries.map(ne => {
-            console.log('ne:', ne);
-
             let ane = {
                 server: sourceServer,
                 tilesetUid: ne.uuid,
@@ -137,17 +138,16 @@ export default class DatasetsList extends React.Component {
         /**
          * Request a list of the tilesets from each known server.
          */
-        let sent = 0;
-        let finished = 0;
+
+        console.log('sortBy:', sortBy);
 
         this.props.trackSourceServers.forEach( sourceServer => {
-            sent += 1;
+            this.sent += 1;
             let targetUrl = sourceServer + '/tilesets/?limit=' + this.pageSize + "&offset=" + offset
 
             if (this.searchValue && this.searchValue.length > 0)
                 targetUrl += "&ac=" + this.searchValue;
 
-            console.log('sortBy:', sortBy);
             if (sortBy) {
                 // sortby definitions are of the form "created|asc" or "created|desc"
                 // the 'asc' or 'desc' indicates ascending or descending
@@ -155,20 +155,18 @@ export default class DatasetsList extends React.Component {
                 let first = parts.slice(0,parts.length-1).join('|');
                 let second = parts.slice(parts.length-1, parts.length);
 
-                console.log('first:', first);
-                console.log('second:', second);
-
-                targetUrl += "&s=" + first;
+                targetUrl += "&o=" + first;
 
                 if (second == 'desc')
-                    targetUrl += "&r=";
+                    targetUrl += "&r=1";
             }
 
-            console.log('targetUrl:', targetUrl);
+            console.log('sending:', targetUrl);
 
             json(targetUrl,
                  function(error, data) {
-                    finished += 1;
+                    this.finished += 1;
+                    console.log('receiving:', targetUrl);
 
                     if (error) {
                         console.error('ERROR:', error);
@@ -185,7 +183,7 @@ export default class DatasetsList extends React.Component {
                         });
                     }
 
-                    if (finished === sent) {
+                    if (this.finished === this.sent) {
                         // all requests have been loaded
 
                     }
@@ -218,7 +216,7 @@ export default class DatasetsList extends React.Component {
         let maxDataCount = dictValues(this.serverDataCounts).reduce((a,b) => a+b, 0);
 
         // fetch the next page, we should always be two pages ahead
-        this.requestTilesetLists(this.state.currentDataPosition + this.pageSize);
+        this.requestTilesetLists(this.state.currentDataPosition + this.pageSize, this.state.sortBy);
 
         this.setState({
             currentDataPosition: Math.min(this.state.currentDataPosition + this.pageSize,
@@ -260,8 +258,11 @@ export default class DatasetsList extends React.Component {
           columnName = null;
 
       this.setState({
-          sortBy: columnName
+          sortBy: columnName,
+          currentDataPosition: 0
       });
+
+      this.requestTilesetLists(0, columnName);
   }
 
     handleFilterChanged(event, newValue) {
@@ -283,7 +284,7 @@ export default class DatasetsList extends React.Component {
         });
 
         // we're going to the top of the list
-        this.requestTilesetLists(0);
+        this.requestTilesetLists(0, this.state.sortBy);
     }
 
     handleRowSelected(row) {
@@ -400,7 +401,6 @@ export default class DatasetsList extends React.Component {
                         firstChild={true}
                     >
                         <TextField 
-                            style={{ "display" : "block", "margin": "auto", "marginBottom": "10px" }}
                             hintText=""
                             floatingLabelText="Filter datasets"
                             onChange={this.handleFilterChanged.bind(this)}
@@ -414,7 +414,6 @@ export default class DatasetsList extends React.Component {
                         >
                             { 
                                 this.headers.map(x => {
-                                console.log('x:', x);
                                     return [(<MenuItem 
                                                 value={x.field + "|asc"}
                                                 key={x.field + "-asc"}
@@ -438,6 +437,8 @@ export default class DatasetsList extends React.Component {
                     headerColumns={this.headers}
                     onSortBy={this.handleSortBy.bind(this)}
                     sortBy={this.state.sortBy}
+                    maxRows={this.pageSize}
+                    loaded={this.sent == this.finished}
                 />
                 <div 
                     style={{
@@ -447,21 +448,44 @@ export default class DatasetsList extends React.Component {
                         width: 80
                     }}
                 >
+                    <div
+                        style={{
+                            display: "flex",
+                            jusitfyContent: "center"
+                            }}
+                    >
                     <img src="img/backward.svg" 
                         alt="Previous datasets"
                         width="30px"
+                        height="60px"
                         onClick={this.handlePrevPage.bind(this)}
                         className={"navigation-button"}
                     />
+                    { this.sent == this.finished ?
+                        <div
+                            style={{
+                                minWidth: 60,
+                                height: 60
+                                }}
+                        />
+                        :
+                        <img src="img/spinner.gif" 
+                            width="60px"
+                            height="60px"
+                        />
+                        }
+
                     <img src="img/forward.svg" 
                         alt="Next datasets"
                         width="30px"
+                        height="60px"
                         onClick={this.handleNextPage.bind(this)}
                         className={"navigation-button"}
                     />
+                </div>
                     { this.state.updatingRow ? "Updating" : "Not updating" }
                     <br />
-                    { "Error: " + this.state.errorMessage }
+                    { "sent:" + this.sent + "Received:" + this.finished + "Error: " + this.state.errorMessage }
                 </div>
             </div>
         );
