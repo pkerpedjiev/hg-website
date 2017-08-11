@@ -52,8 +52,7 @@ export default class EditTable extends React.Component {
       display: 'flex',
       flexFlow: 'row nowrap',
       width: 50,
-      height: 24,
-      alignItems: 'center'
+      height: 24
     }
 
     const rowStyle = {
@@ -78,7 +77,6 @@ export default class EditTable extends React.Component {
                       flexFlow: 'row nowrap',
                       flexGrow: 0.15,
                       flexBasis: 'content',
-                      alignItems: 'center',
                       padding: '5px',
                       height: 30,
                       width: width || 200
@@ -115,7 +113,6 @@ export default class EditTable extends React.Component {
       display: 'flex',
       flexFlow: 'column nowrap',
       justifyContent: 'space-between',
-      alignItems: 'center',
       fontFamily: 'Roboto, sans-serif'
     }
 
