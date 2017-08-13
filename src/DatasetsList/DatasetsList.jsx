@@ -32,7 +32,9 @@ export default class DatasetsList extends React.Component {
             {value: 'UID', field: 'uuid', type: 'TextField', width: 100},
             {value: 'Name', field: 'name', type: 'TextField', width: 300},
             {value: 'Datatype', field: 'datatype', type: 'TextField', width: 100},
-            {value: 'Created', field: 'created', type: 'TextField', width: 200}
+            {value: 'Created', field: 'created', type: 'TextField', width: 200},
+            {value: 'Server', field: 'server', type: 'TextField', width: 200},
+            {value: 'Owner', field: 'owner', type: 'TextField', width: 200}
         ]
 
         // how many entries we've received from each server so far

@@ -61,11 +61,8 @@ export default class EditableTableEntry extends React.Component {
 
   getCellValue(value, width, onChange, options) {
     const textFieldStyle = {
-      width: width
-    }
-
-    const datePickerStyle = {
-      width: width
+        width: width,
+        height: 40
     }
 
     let editable = options && options.editable;
@@ -80,13 +77,20 @@ export default class EditableTableEntry extends React.Component {
     const pStyle ={
                     color: '#888',
                     width: width,
+                    height: 30,
                     'WebkitMarginBefore': ".3em",
                     'WebkitMarginAfter': ".3em"
                 }
 
 
     if (!editable) {
-      return <p style={pStyle}>{value}</p>
+        return <TextField
+            id='y'
+            disabled={true}
+            style={textFieldStyle}
+            underlineStyle={{display: 'none'}}
+            value={value}
+        />
     }
 
     let selected = this.props.row.selected;
@@ -96,13 +100,18 @@ export default class EditableTableEntry extends React.Component {
             id="x"
             onChange={onChange}
             style={textFieldStyle}
+            underlineStyle={{bottom: '2px'}}
             value={value}
           />
         } else {
-            return (<p 
-                style={pStyle}
-            >{value}</p>)
-
+          return <TextField
+            id="x"
+            onChange={onChange}
+            style={textFieldStyle}
+            disabled={true}
+            underlineStyle={{display: 'none'}}
+            value={value}
+          />
         }
   }
 
@@ -126,6 +135,8 @@ export default class EditableTableEntry extends React.Component {
         columnValues[column.field] = nextProps.row.entry[column.field];
     }
 
+    columnValues['server'] = nextProps.row.server;
+
     this.setState({
         columnValues: columnValues
     });
@@ -133,6 +144,8 @@ export default class EditableTableEntry extends React.Component {
 
   render() {
     let row = this.props.row;
+
+    console.log('row:', row);
 
     const rowStyle = {
         //width: '100%',
@@ -206,11 +219,27 @@ export default class EditableTableEntry extends React.Component {
             )}
         </div>
 
-        <div key={'uuid'} className='cell' style={rightCellStyle}>
+        <div key={'uuid'} className='cell' style={leftCellStyle}>
             {this.getCellValue(
                 this.state.columnValues['uuid'],
                 200,
                 x => this.setState(Object.assign(this.state.columnValue, {'uuid': x.target.value}))
+            )}
+        </div>
+
+        <div key={'server'} className='cell' style={leftCellStyle}>
+            {this.getCellValue(
+                this.state.columnValues['server'],
+                200,
+                x => this.setState(Object.assign(this.state.columnValue, {'server': x.target.value}))
+            )}
+        </div>
+
+        <div key={'owner'} className='cell' style={leftCellStyle}>
+            {this.getCellValue(
+                this.state.columnValues['owner'],
+                200,
+                x => this.setState(Object.assign(this.state.columnValue, {'owner': x.target.value}))
             )}
         </div>
 
