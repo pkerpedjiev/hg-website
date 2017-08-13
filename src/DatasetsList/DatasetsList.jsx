@@ -7,6 +7,8 @@ import EditTable from '../MaterialUiTableEdit/MaterialUiTableEdit.jsx';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+import FontIcon from 'material-ui/FontIcon';
+
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
 
 
@@ -398,19 +400,43 @@ export default class DatasetsList extends React.Component {
 
         return(
             <div>
-                <Toolbar>
+                <Toolbar
+                    style={{
+                        backgroundColor: '#FFF',
+                        marginBottom: 20
+                    }}
+                >
                     <ToolbarGroup
                         firstChild={true}
                     >
+                        <FontIcon 
+                            className="material-icons"
+                            style={{
+                                paddingLeft: 0,
+                                marginLeft: 56,
+                                marginRight: 5}}
+                        >
+                            {"filter_list"}
+                        </FontIcon>
+
                         <TextField 
+                            style={{
+                                }}
                             hintText=""
-                            floatingLabelText="Filter datasets"
+                            floatingLabelText=""
                             onChange={this.handleFilterChanged.bind(this)}
                         >
                         </TextField>
 
+                        <FontIcon 
+                            className="material-icons"
+                            style={{marginRight: 5}}
+                        >
+                            {"sort"}
+                        </FontIcon>
+
                         <SelectField
-                            floatingLabelText={"Sort by"}
+                            floatingLabelText={""}
                             value={this.state.sortBy}
                             onChange={this.handleSortBy.bind(this)}
                         >

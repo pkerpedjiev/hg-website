@@ -70,6 +70,9 @@ export default class EditableTableEntry extends React.Component {
                                                    // need to be reverse formatted or 
                                                    // read only
 
+    if (!value)                 // prevent errors about null values
+        value = "";
+
     if (formatter) {
         value = formatter(value);
     }
@@ -95,6 +98,8 @@ export default class EditableTableEntry extends React.Component {
 
     let selected = this.props.row.selected;
 
+    console.log('options.style:', options.style, Object.assign(textFieldStyle, options.style));
+
     if (selected) {
           return <TextField
             id="x"
@@ -107,6 +112,7 @@ export default class EditableTableEntry extends React.Component {
           return <TextField
             id="x"
             onChange={onChange}
+            inputStyle={options.style}
             style={textFieldStyle}
             disabled={true}
             underlineStyle={{display: 'none'}}
@@ -145,8 +151,6 @@ export default class EditableTableEntry extends React.Component {
   render() {
     let row = this.props.row;
 
-    console.log('row:', row);
-
     const rowStyle = {
         //width: '100%',
       display: 'flex',
@@ -154,7 +158,7 @@ export default class EditableTableEntry extends React.Component {
       flexWrap: 'wrap',
       padding: row.header ? 0 : 8,
       border: 0,
-      borderBottom: '0px solid #ccc',
+      borderBottom: '1px solid #ccc',
       justifyContent: 'spaceBetween',
       alignItems: "start",
       height: 70
@@ -205,7 +209,7 @@ export default class EditableTableEntry extends React.Component {
                 this.state.columnValues['name'],
                 540,
                 x => this.setState(Object.assign(this.state.columnValue, {'name': x})),
-                { editable: true }
+                { editable: true, style: { color: 'black'} }
             )}
         </div>
 

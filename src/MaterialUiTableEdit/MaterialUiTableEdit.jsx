@@ -135,7 +135,6 @@ export default class EditTable extends React.Component {
 
     return (
       <div className='container' style={style}>
-        {this.renderHeader()}
         {rows.map((row, id) => {
             row.id = id;
             return (<EditableTableEntry 
