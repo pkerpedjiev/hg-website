@@ -5,7 +5,7 @@ import React from 'react';
 import MenuItem from 'material-ui/MenuItem';
 import Menu from 'material-ui/Menu';
 import TextField from 'material-ui/TextField';
-import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
+import {Toolbar, ToolbarGroup} from 'material-ui/Toolbar';
 import RaisedButton from 'material-ui/RaisedButton';
 import {json} from 'd3-request';
 

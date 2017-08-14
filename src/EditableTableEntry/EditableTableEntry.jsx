@@ -1,7 +1,7 @@
 import React from 'react';
 import Check from 'material-ui/svg-icons/navigation/check';
 import ModeEdit from 'material-ui/svg-icons/editor/mode-edit';
-import {IconButton, Toggle, TextField, DatePicker} from 'material-ui';
+import {IconButton, TextField} from 'material-ui';
 
 export default class EditableTableEntry extends React.Component {
     constructor(props) {
@@ -41,7 +41,7 @@ export default class EditableTableEntry extends React.Component {
          *
          *  A date formatted according to the local locale
          */
-        if (!dateStr || dateStr.length == 0)
+        if (!dateStr || dateStr.length === 0)
             return "";
 
         let d = new Date(Date.parse(dateStr));
@@ -77,6 +77,7 @@ export default class EditableTableEntry extends React.Component {
         value = formatter(value);
     }
 
+    /*
     const pStyle ={
                     color: '#888',
                     width: width,
@@ -84,6 +85,7 @@ export default class EditableTableEntry extends React.Component {
                     'WebkitMarginBefore': ".3em",
                     'WebkitMarginAfter': ".3em"
                 }
+                */
 
 
     if (!editable) {
@@ -97,8 +99,6 @@ export default class EditableTableEntry extends React.Component {
     }
 
     let selected = this.props.row.selected;
-
-    console.log('options.style:', options.style, Object.assign(textFieldStyle, options.style));
 
     if (selected) {
           return <TextField

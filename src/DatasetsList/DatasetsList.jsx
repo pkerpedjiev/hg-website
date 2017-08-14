@@ -9,9 +9,7 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import FontIcon from 'material-ui/FontIcon';
 
-import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
-
-
+import {Toolbar, ToolbarGroup} from 'material-ui/Toolbar';
 
 import './styles.module.css';
 
@@ -26,7 +24,7 @@ export default class DatasetsList extends React.Component {
 
         this.rowsBeforeEditing = {};
 
-        this.pageSize = 10;
+        this.pageSize = 5;
         this.sent = 0;
         this.finished = 0;
 
@@ -49,6 +47,7 @@ export default class DatasetsList extends React.Component {
         // fetch the first two pages of results
 
         this.searchValue = "";
+        this.tilesets = [];
 
         this.state = {
             updatingRow: false,
@@ -58,9 +57,13 @@ export default class DatasetsList extends React.Component {
             sortBy: 'name|desc'
         }
 
+    }
+
+    componentDidMount() {
         this.requestTilesetLists(0, this.state.sortBy);
         this.requestTilesetLists(this.pageSize, this.state.sortBy);
     }
+
     prepareNewEntries(sourceServer, newEntries, existingTilesets) {
         /**
          * Add meta data to new tileset entries before adding
@@ -161,34 +164,38 @@ export default class DatasetsList extends React.Component {
 
                 targetUrl += "&o=" + first;
 
-                if (second == 'desc')
+                if (second === 'desc')
                     targetUrl += "&r=1";
             }
 
-            console.log('sending:', targetUrl);
+            //console.log('sending:', targetUrl);
+            this.setState({
+                loaded: false
+            });
 
             json(targetUrl,
                  function(error, data) {
                     this.finished += 1;
-                    console.log('receiving:', targetUrl);
+                    //console.log('receiving:', targetUrl);
 
                     if (error) {
                         console.error('ERROR:', error);
                     } else {
                         let newTilesets = this.prepareNewEntries(sourceServer, 
                                                                  data.results, 
-                                                                 this.state.tilesets);
+                                                                 this.tilesets);
 
                                                                  //this.serverDataPositions[sourceServer] += data.results.length;
                         this.serverDataCounts[sourceServer] = data.count;
 
-                        this.setState({
-                            tilesets: newTilesets
-                        });
+                        this.tilesets = newTilesets;
                     }
 
                     if (this.finished === this.sent) {
-                        // all requests have been loaded
+                        this.setState({
+                            loaded: true,
+                            tilesets: this.tilesets
+                        });
 
                     }
                 }.bind(this));
@@ -374,18 +381,20 @@ export default class DatasetsList extends React.Component {
     render() {
         let datasets1 = dictValues(this.state.tilesets)
 
+
         .filter(x => {
             if (this.searchValue.length)
                 return x.name.toLowerCase().includes(this.searchValue.toLowerCase());
             return true;
         })
 
+
         if (this.state.sortBy) {
             let parts = this.state.sortBy.split('|');
             let first = parts.slice(0,parts.length-1).join('|');
             let second = parts.slice(parts.length-1, parts.length);
 
-            if (second == 'desc') {
+            if (second === 'desc') {
                 datasets1 = datasets1.sort((a,b) => 
                                            -a[first.toLowerCase()]
                                            .localeCompare(b[first.toLowerCase()]));
@@ -397,6 +406,7 @@ export default class DatasetsList extends React.Component {
         }
 
         datasets1 = datasets1.slice(this.state.currentDataPosition, this.state.currentDataPosition + this.pageSize)
+        console.log('datasets1:', datasets1);
 
         return(
             <div>
@@ -466,7 +476,7 @@ export default class DatasetsList extends React.Component {
                     onSortBy={this.handleSortBy.bind(this)}
                     sortBy={this.state.sortBy}
                     maxRows={this.pageSize}
-                    loaded={this.sent == this.finished}
+                    loaded={this.sent === this.finished}
                 />
                 <div 
                     style={{
@@ -489,7 +499,7 @@ export default class DatasetsList extends React.Component {
                         onClick={this.handlePrevPage.bind(this)}
                         className={"navigation-button"}
                     />
-                    { this.sent == this.finished ?
+                    { this.sent === this.finished ?
                         <div
                             style={{
                                 minWidth: 60,
@@ -498,6 +508,7 @@ export default class DatasetsList extends React.Component {
                         />
                         :
                         <img src="img/spinner.gif" 
+                            alt="Loading..."
                             width="60px"
                             height="60px"
                         />

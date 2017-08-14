@@ -119,6 +119,7 @@ export default class EditTable extends React.Component {
 
     let rows = this.state.rows;
 
+    /*
     if (!this.props.loaded) {
         // create dummy rows
         rows = [];
@@ -132,6 +133,7 @@ export default class EditTable extends React.Component {
             rows.push(row);
         }
     }
+    */
 
     return (
       <div className='container' style={style}>
