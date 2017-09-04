@@ -1,5 +1,5 @@
-const React = require('react')
 import EditableTableEntry from '../EditableTableEntry/EditableTableEntry.jsx';
+import React from 'react';
 
 export default class EditTable extends React.Component {
     constructor(props) {

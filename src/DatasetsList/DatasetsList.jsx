@@ -48,6 +48,7 @@ export default class DatasetsList extends React.Component {
 
         this.searchValue = "";
         this.tilesets = [];
+        this.currentDataPosition = 0;
 
         this.state = {
             updatingRow: false,
@@ -194,9 +195,9 @@ export default class DatasetsList extends React.Component {
                     if (this.finished === this.sent) {
                         this.setState({
                             loaded: true,
+                            currentDataPosition: this.currentDataPosition,
                             tilesets: this.tilesets
                         });
-
                     }
                 }.bind(this));
         });
@@ -225,14 +226,15 @@ export default class DatasetsList extends React.Component {
          */
 
         let maxDataCount = dictValues(this.serverDataCounts).reduce((a,b) => a+b, 0);
+        console.log('maxDataCount', maxDataCount);
 
         // fetch the next page, we should always be two pages ahead
         this.requestTilesetLists(this.state.currentDataPosition + this.pageSize, this.state.sortBy);
 
-        this.setState({
-            currentDataPosition: Math.min(this.state.currentDataPosition + this.pageSize,
-                                          maxDataCount)
-        });
+        // we don't set the state here but rather wait until we're sure
+        // we have the data in requestTilesetLists
+        this.currentDataPosition = Math.min(this.currentDataPosition + this.pageSize, maxDataCount);
+
     }
 
     handlePrevPage() {
@@ -406,7 +408,6 @@ export default class DatasetsList extends React.Component {
         }
 
         datasets1 = datasets1.slice(this.state.currentDataPosition, this.state.currentDataPosition + this.pageSize)
-        console.log('datasets1:', datasets1);
 
         return(
             <div>
@@ -476,7 +477,6 @@ export default class DatasetsList extends React.Component {
                     onSortBy={this.handleSortBy.bind(this)}
                     sortBy={this.state.sortBy}
                     maxRows={this.pageSize}
-                    loaded={this.sent === this.finished}
                 />
                 <div 
                     style={{
