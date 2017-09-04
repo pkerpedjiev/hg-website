@@ -1,5 +1,5 @@
-const React = require('react')
 import EditableTableEntry from '../EditableTableEntry/EditableTableEntry.jsx';
+import React from 'react';
 
 export default class EditTable extends React.Component {
     constructor(props) {
@@ -52,8 +52,7 @@ export default class EditTable extends React.Component {
       display: 'flex',
       flexFlow: 'row nowrap',
       width: 50,
-      height: 24,
-      alignItems: 'center'
+      height: 24
     }
 
     const rowStyle = {
@@ -78,14 +77,15 @@ export default class EditTable extends React.Component {
                       flexFlow: 'row nowrap',
                       flexGrow: 0.15,
                       flexBasis: 'content',
-                      alignItems: 'center',
                       padding: '5px',
                       height: 30,
                       width: width || 200
                     }
 
-                    if (this.props.sortBy === header.field)
+                    if (this.props.sortBy === header.field && !this.props.reverseSort)
                         cellStyle.background = "#aaa";
+                    if (this.props.sortBy === header.field && this.props.reverseSort)
+                        cellStyle.background = "#0aa";
 
                     return (
                       <div 
@@ -113,15 +113,30 @@ export default class EditTable extends React.Component {
       display: 'flex',
       flexFlow: 'column nowrap',
       justifyContent: 'space-between',
-      alignItems: 'center',
       fontFamily: 'Roboto, sans-serif'
     }
 
-    const rows = this.state.rows
+
+    let rows = this.state.rows;
+
+    /*
+    if (!this.props.loaded) {
+        // create dummy rows
+        rows = [];
+        for (let i = 0; i < this.props.maxRows; i++) {
+            let row = {entry: {}};
+
+            for (let headerColumn of this.props.headerColumns) {
+                row.entry[headerColumn.field] = '';
+            }
+
+            rows.push(row);
+        }
+    }
+    */
 
     return (
       <div className='container' style={style}>
-        {this.renderHeader()}
         {rows.map((row, id) => {
             row.id = id;
             return (<EditableTableEntry 

@@ -1,7 +1,7 @@
 import React from 'react';
 import Check from 'material-ui/svg-icons/navigation/check';
 import ModeEdit from 'material-ui/svg-icons/editor/mode-edit';
-import {IconButton, Toggle, TextField, DatePicker} from 'material-ui';
+import {IconButton, TextField} from 'material-ui';
 
 export default class EditableTableEntry extends React.Component {
     constructor(props) {
@@ -18,91 +18,107 @@ export default class EditableTableEntry extends React.Component {
         }
     }
 
-  getCellValue(column) {
-    const type = column.type;
-    const value = this.state.columnValues[column.field];
-    const textFieldId = column.field;
-    const datePickerId = column.field;
+    getCreatedValue() {
+        return this.getCellValue(
+            { 
+                value: "Created",
+                field: 'created',
+                type: 'TextField',
+                width: 200
+            });
+    }
 
+    dateFormatter(dateStr) {
+        /**
+         * Format dates as in the OS X finder
+         *
+         * Arguments:
+         * ----------
+         *  dateStr: string (e.g. 2017-02-03T04:15:09.215986Z)
+         *
+         * Returns:
+         * --------
+         *
+         *  A date formatted according to the local locale
+         */
+        if (!dateStr || dateStr.length === 0)
+            return "";
+
+        let d = new Date(Date.parse(dateStr));
+
+        let language;
+        if (window.navigator.languages) {
+                language = window.navigator.languages[0];
+        } else {
+                language = window.navigator.userLanguage || window.navigator.language;
+        }
+
+        if (language)
+            return d.toLocaleDateString(language) + " " + d.toLocaleTimeString(language)
+        else
+            return d.toLocaleDateString('en-US') + " " + d.toLocaleTimeString(language);
+    }
+
+  getCellValue(value, width, onChange, options) {
     const textFieldStyle = {
-      width: column.width
+        width: width,
+        height: 40
     }
 
-    const datePickerStyle = {
-      width: column.width
+    let editable = options && options.editable;
+    let formatter = options && options.formatter;  // things that are formatted either 
+                                                   // need to be reverse formatted or 
+                                                   // read only
+
+    if (!value)                 // prevent errors about null values
+        value = "";
+
+    if (formatter) {
+        value = formatter(value);
     }
 
-    const onTextFieldChange = (e) => {
-        /*
-      const target = e.target
-      const value = target.value
-      var rows = this.state.rows
-      rows[rowId].columns[id].value = value
-      this.setState({rows: rows})
-      */
-        let columnValues = this.state.columnValues;
-        columnValues[column.field] = e.target.value;
+    /*
+    const pStyle ={
+                    color: '#888',
+                    width: width,
+                    height: 30,
+                    'WebkitMarginBefore': ".3em",
+                    'WebkitMarginAfter': ".3em"
+                }
+                */
 
-        this.setState({ columnValues: columnValues});
-    }
 
-    const onDatePickerChange = (e, date) => {
-        /*
-      var rows = this.state.rows
-      rows[rowId].columns[id].value = date
-      this.setState({rows: rows})
-      */
-    }
-
-    const onToggle = (e) => {
-        /*
-      var rows = this.state.rows
-      rows[rowId].columns[id].value = !rows[rowId].columns[id].value
-      this.setState({rows: rows})
-      */
-    }
-
-    if (this.props.row.entry.header || (type && type === 'ReadOnly')) {
-      return <p style={{color: '#888'}}>{value}</p>
+    if (!editable) {
+        return <TextField
+            id='y'
+            disabled={true}
+            style={textFieldStyle}
+            underlineStyle={{display: 'none'}}
+            value={value}
+        />
     }
 
     let selected = this.props.row.selected;
 
-    if (type) {
-      if (selected) {
-        if (type === 'TextField') {
+    if (selected) {
           return <TextField
-            id={textFieldId}
-            onChange={onTextFieldChange}
+            id="x"
+            onChange={onChange}
             style={textFieldStyle}
+            underlineStyle={{bottom: '2px'}}
+            value={value}
+          />
+        } else {
+          return <TextField
+            id="x"
+            onChange={onChange}
+            inputStyle={options.style}
+            style={textFieldStyle}
+            disabled={true}
+            underlineStyle={{display: 'none'}}
             value={value}
           />
         }
-        if (type === 'DatePicker') {
-          return <DatePicker
-            id={datePickerId}
-            onChange={onDatePickerChange}
-            mode='landscape'
-            style={datePickerStyle}
-            value={value}
-          />
-        }
-        if (type === 'Toggle') {
-          return <Toggle onToggle={onToggle} toggled={value} />
-        }
-      } else {
-        if (type === 'Toggle') {
-          return <Toggle disabled onToggle={onToggle} toggled={value} />
-        }
-      }
-    }
-
-    return <TextField
-      id={textFieldId}
-      style={textFieldStyle}
-      disabled
-      value={value}
-    />
   }
 
   handleRowClick(e) {
@@ -125,6 +141,8 @@ export default class EditableTableEntry extends React.Component {
         columnValues[column.field] = nextProps.row.entry[column.field];
     }
 
+    columnValues['server'] = nextProps.row.server;
+
     this.setState({
         columnValues: columnValues
     });
@@ -136,18 +154,28 @@ export default class EditableTableEntry extends React.Component {
     const rowStyle = {
         //width: '100%',
       display: 'flex',
-      flexFlow: 'row nowrap',
+      flexFlow: 'row',
+      flexWrap: 'wrap',
       padding: row.header ? 0 : 8,
       border: 0,
-      borderBottom: '0px solid #ccc',
-      height: 30
+      borderBottom: '1px solid #ccc',
+      justifyContent: 'spaceBetween',
+      alignItems: "start",
+      height: 70
     }
     const checkboxStyle = {
-      display: 'flex',
-      flexFlow: 'row nowrap',
+        marginTop: 8,
       width: 50,
       height: 24,
-      alignItems: 'center'
+      alignItems: 'flex-start'
+    }
+
+    const leftCellStyle = {
+        paddingRight: "5px"
+    }
+
+    const rightCellStyle = {
+        paddingLeft: "5px"
     }
 
     const rowId = row.id
@@ -156,8 +184,6 @@ export default class EditableTableEntry extends React.Component {
 
     const button = selected ? <Check /> : <ModeEdit />
     const tooltip = selected ? 'Done' : 'Edit'
-
-    console.log('row:', this.props.row);
 
     const checkbox = row.header ? <div style={checkboxStyle} />
     : <IconButton 
@@ -169,31 +195,61 @@ export default class EditableTableEntry extends React.Component {
       </IconButton>
 
     return (
-      <div key={rowKey} className='row' style={rowStyle}>
+        <div 
+            style={{
+            display: "flex",
+            alignItems: "flex-start"
+            }}
+        >
         {checkbox}
-        {this.props.headerColumns.map((column) => {
-              const cellStyle = {
-                display: 'flex',
-                flexFlow: 'row nowrap',
-                flexGrow: 0.15,
-                flexBasis: 'content',
-                alignItems: 'center',
-                padding: '5px',
-                height: 30,
-                width: column.width || 200
-              }
 
-          const columnKey = column.field;
+      <div key={rowKey} className='row' style={rowStyle}>
+        <div key={'name'} className='cell' style={leftCellStyle}>
+            {this.getCellValue(
+                this.state.columnValues['name'],
+                540,
+                x => this.setState(Object.assign(this.state.columnValue, {'name': x})),
+                { editable: true, style: { color: 'black'} }
+            )}
+        </div>
 
-          return (
-            <div key={columnKey} className='cell' style={cellStyle}>
-              <div>
-                {this.getCellValue(column)}
-              </div>
-            </div>
-          )
-        })}
+        <div key={'created'} className='cell' style={rightCellStyle}>
+            {this.getCellValue(
+                this.state.columnValues['created'],
+                180,
+                x => this.setState(Object.assign(this.state.columnValue, {'created': x.target.value})),
+                {formatter: this.dateFormatter}
+
+            )}
+        </div>
+
+        <div key={'uuid'} className='cell' style={leftCellStyle}>
+            {this.getCellValue(
+                this.state.columnValues['uuid'],
+                200,
+                x => this.setState(Object.assign(this.state.columnValue, {'uuid': x.target.value}))
+            )}
+        </div>
+
+        <div key={'server'} className='cell' style={leftCellStyle}>
+            {this.getCellValue(
+                this.state.columnValues['server'],
+                200,
+                x => this.setState(Object.assign(this.state.columnValue, {'server': x.target.value}))
+            )}
+        </div>
+
+        <div key={'owner'} className='cell' style={leftCellStyle}>
+            {this.getCellValue(
+                this.state.columnValues['owner'],
+                200,
+                x => this.setState(Object.assign(this.state.columnValue, {'owner': x.target.value}))
+            )}
+        </div>
+
+
       </div>
+    </div>
     )
   }
 }

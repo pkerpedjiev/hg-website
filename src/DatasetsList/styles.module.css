@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Hind:400,600');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
 .navigation-button {
     opacity: 0.4;
@@ -10,3 +11,10 @@
     opacity: 0.9
 }
 
+.muidocs-icon-custom-sort {
+    font-family: 'material-ui-icons'
+}
+
+.muidocs-icon-custom-sort:before {
+        content: "sort";
+}
