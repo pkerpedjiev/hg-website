@@ -147,8 +147,6 @@ export default class DatasetsList extends React.Component {
          * Request a list of the tilesets from each known server.
          */
 
-        console.log('sortBy:', sortBy);
-
         this.props.trackSourceServers.forEach( sourceServer => {
             this.sent += 1;
             let targetUrl = sourceServer + '/tilesets/?limit=' + this.pageSize + "&offset=" + offset
@@ -165,8 +163,9 @@ export default class DatasetsList extends React.Component {
 
                 targetUrl += "&o=" + first;
 
-                if (second === 'desc')
+                if (second[0] === 'desc')
                     targetUrl += "&r=1";
+
             }
 
             //console.log('sending:', targetUrl);
@@ -226,7 +225,6 @@ export default class DatasetsList extends React.Component {
          */
 
         let maxDataCount = dictValues(this.serverDataCounts).reduce((a,b) => a+b, 0);
-        console.log('maxDataCount', maxDataCount);
 
         // fetch the next page, we should always be two pages ahead
         this.requestTilesetLists(this.currentDataPosition + this.pageSize, this.state.sortBy);
@@ -272,6 +270,7 @@ export default class DatasetsList extends React.Component {
           columnName = null;
 
       this.currentDataPosition = 0;
+      this.tilesets = [];
 
       this.setState({
           sortBy: columnName,
@@ -398,7 +397,7 @@ export default class DatasetsList extends React.Component {
         if (this.state.sortBy) {
             let parts = this.state.sortBy.split('|');
             let first = parts.slice(0,parts.length-1).join('|');
-            let second = parts.slice(parts.length-1, parts.length);
+            let second = parts.slice(parts.length-1, parts.length)[0];
 
             if (second === 'desc') {
                 datasets1 = datasets1.sort((a,b) => 
