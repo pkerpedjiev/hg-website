@@ -229,7 +229,7 @@ export default class DatasetsList extends React.Component {
         console.log('maxDataCount', maxDataCount);
 
         // fetch the next page, we should always be two pages ahead
-        this.requestTilesetLists(this.state.currentDataPosition + this.pageSize, this.state.sortBy);
+        this.requestTilesetLists(this.currentDataPosition + this.pageSize, this.state.sortBy);
 
         // we don't set the state here but rather wait until we're sure
         // we have the data in requestTilesetLists
@@ -241,9 +241,10 @@ export default class DatasetsList extends React.Component {
         /**
          * Return to the previous page of results
          */
+
+        this.currentDataPosition = Math.max(this.state.currentDataPosition - this.pageSize, 0)
         this.setState({
-            currentDataPosition: Math.max(this.state.currentDataPosition - this.pageSize,
-                                          0)
+            currentDataPosition: this.currentDataPosition
 
         });
     }
@@ -270,9 +271,11 @@ export default class DatasetsList extends React.Component {
       if (columnName === this.state.sortBy)
           columnName = null;
 
+      this.currentDataPosition = 0;
+
       this.setState({
           sortBy: columnName,
-          currentDataPosition: 0
+          currentDataPosition: this.currentDataPosition
       });
 
       this.requestTilesetLists(0, columnName);
@@ -290,6 +293,7 @@ export default class DatasetsList extends React.Component {
          *      The new value of the text field.
          */
         this.searchValue = newValue;
+        this.currentDataPosition = 0;
 
         // clear all previously retrieved tilesets
         this.setState({
