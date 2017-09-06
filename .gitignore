@@ -10,3 +10,4 @@ dist
 build
 dist.zip
 .DS_Store
+package-lock.json
