@@ -1,15 +1,16 @@
 import EditableTableEntry from '../EditableTableEntry/EditableTableEntry.jsx';
+import CommentsArea from '../CommentsArea/CommentsArea.js';
 import React from 'react';
 
 export default class EditTable extends React.Component {
-    constructor(props) {
-        super(props);
+  constructor(props) {
+    super(props);
 
-        this.state = {
-            headerColumns: [],
-            rows: [],
-        }
+    this.state = {
+      headerColumns: [],
+      rows: [],
     }
+  }
 
   getInitialState() {
     return {
@@ -24,20 +25,20 @@ export default class EditTable extends React.Component {
   }
 
   handleRowClick(row) {
-      var rows = this.state.rows
-      const rowId = row.id;
+    var rows = this.state.rows
+    const rowId = row.id;
 
-      if (rows[rowId].selected && this.props.onRowChange)
-          this.props.onRowChange(row);
-      else
-          this.props.onRowSelected(row);
+    if (rows[rowId].selected && this.props.onRowChange)
+      this.props.onRowChange(row);
+    else
+      this.props.onRowSelected(row);
 
-      rows.forEach((row, i) => {
-        if (rowId !== i) row.selected = false
-      })
+    rows.forEach((row, i) => {
+      if (rowId !== i) row.selected = false
+    })
 
-      rows[rowId].selected = !rows[rowId].selected
-      this.setState({rows: rows})
+    rows[rowId].selected = !rows[rowId].selected
+    this.setState({rows: rows})
   }
 
 
@@ -56,7 +57,7 @@ export default class EditTable extends React.Component {
     }
 
     const rowStyle = {
-        //width: '100%',
+      //width: '100%',
       display: 'flex',
       flexFlow: 'row nowrap',
       padding: row.header ? 0 : 8,
@@ -66,40 +67,40 @@ export default class EditTable extends React.Component {
     }
 
     return (
-        <div key={"header"} style={rowStyle}>
-            <div style={checkboxStyle} />
-            { 
-                headerColumns.map((header, id) => {
-                    const width = header.width
+      <div key={"header"} style={rowStyle}>
+      <div style={checkboxStyle} />
+      { 
+        headerColumns.map((header, id) => {
+          const width = header.width
 
-                    let cellStyle = {
-                      display: 'flex',
-                      flexFlow: 'row nowrap',
-                      flexGrow: 0.15,
-                      flexBasis: 'content',
-                      padding: '5px',
-                      height: 30,
-                      width: width || 200
-                    }
+          let cellStyle = {
+            display: 'flex',
+            flexFlow: 'row nowrap',
+            flexGrow: 0.15,
+            flexBasis: 'content',
+            padding: '5px',
+            height: 30,
+            width: width || 200
+          }
 
-                    if (this.props.sortBy === header.field && !this.props.reverseSort)
-                        cellStyle.background = "#aaa";
-                    if (this.props.sortBy === header.field && this.props.reverseSort)
-                        cellStyle.background = "#0aa";
+          if (this.props.sortBy === header.field && !this.props.reverseSort)
+            cellStyle.background = "#aaa";
+          if (this.props.sortBy === header.field && this.props.reverseSort)
+            cellStyle.background = "#0aa";
 
-                    return (
-                      <div 
-                        key={"header-" + id}
-                        className='cell' 
-                        onClick={() => this.props.onSortBy(header.field)}
-                        style={cellStyle}>
-                            <div>
-                                {header.value}
-                            </div>
-                      </div>)
-                })
-            }
-        </div>
+          return (
+            <div 
+            key={"header-" + id}
+            className='cell' 
+            onClick={() => this.props.onSortBy(header.field)}
+            style={cellStyle}>
+            <div>
+            {header.value}
+            </div>
+            </div>)
+        })
+      }
+      </div>
     );
   }
 
@@ -121,7 +122,7 @@ export default class EditTable extends React.Component {
 
     /*
     if (!this.props.loaded) {
-        // create dummy rows
+      // create dummy rows
         rows = [];
         for (let i = 0; i < this.props.maxRows; i++) {
             let row = {entry: {}};
@@ -135,18 +136,28 @@ export default class EditTable extends React.Component {
     }
     */
 
-    return (
-      <div className='container' style={style}>
+      return (
+        <div className='container' style={style}>
         {rows.map((row, id) => {
-            row.id = id;
-            return (<EditableTableEntry 
-                key={row.id}
-                headerColumns={this.props.headerColumns}
-                row={row} 
-                onRowClick={this.handleRowClick.bind(this)}
-            />)
+          row.id = id;
+          return (<div
+            key={row.id}
+            >
+            <EditableTableEntry 
+            headerColumns={this.props.headerColumns}
+            row={row} 
+            onRowClick={this.handleRowClick.bind(this)}
+            />
+
+            <CommentsArea
+              sourceUid={row.tilesetUid} 
+            >
+
+            </CommentsArea>
+            </div>
+          )
         })}
-      </div>
-    )
+        </div>
+      )
   }
 }
