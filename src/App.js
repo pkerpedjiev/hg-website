@@ -18,11 +18,11 @@ class App extends Component {
 
   render() {
     return (
-        <MuiThemeProvider>
-            <div>
-                <Nav auth={this.props.auth}/>
-            </div>
-        </MuiThemeProvider>
+      <MuiThemeProvider>
+      <div>
+      <Nav auth={this.props.auth}/>
+      </div>
+      </MuiThemeProvider>
     );
   }
 }

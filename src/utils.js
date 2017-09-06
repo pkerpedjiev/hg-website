@@ -1,45 +1,45 @@
 export function dictValues(dictionary) {
-    /**
-     * Return an array of values that are present in this dictionary
-     */
-    let values = [];
+  /**
+   * Return an array of values that are present in this dictionary
+   */
+  let values = [];
 
-    for (let key in dictionary) {
-        if (dictionary.hasOwnProperty(key)) {
-            values.push(dictionary[key]);
-        }
+  for (let key in dictionary) {
+    if (dictionary.hasOwnProperty(key)) {
+      values.push(dictionary[key]);
     }
+  }
 
-    return values;
+  return values;
 }
 
 export function dictKeys(dictionary) {
-    /**
-     * Return an array of values that are present in this dictionary
-     */
-    let keys = [];
+  /**
+   * Return an array of values that are present in this dictionary
+   */
+  let keys = [];
 
-    for (let key in dictionary) {
-        if (dictionary.hasOwnProperty(key)) {
-            keys.push(key);
-        }
+  for (let key in dictionary) {
+    if (dictionary.hasOwnProperty(key)) {
+      keys.push(key);
     }
+  }
 
-    return keys;
+  return keys;
 }
 
 export function dictItems(dictionary) {
-    /**
-     * Return an array of (key,value) pairs that are present in this
-     * dictionary
-     */
-    let keyValues = [];
+  /**
+   * Return an array of (key,value) pairs that are present in this
+   * dictionary
+   */
+  let keyValues = [];
 
-    for (let key in dictionary) {
-        if (dictionary.hasOwnProperty(key)) {
-            keyValues.push([key, dictionary[key]]);
-        }
+  for (let key in dictionary) {
+    if (dictionary.hasOwnProperty(key)) {
+      keyValues.push([key, dictionary[key]]);
     }
+  }
 
-    return keyValues;
+  return keyValues;
 }
