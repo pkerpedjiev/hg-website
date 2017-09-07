@@ -33,7 +33,12 @@ export default class CommentsArea extends React.Component {
           });
         }
     }.bind(this));
+  }
 
+  handleCommentAdded(newComment) {
+    this.setState({
+      retrievedComments: this.state.retrievedComments.concat([newComment])
+    });
   }
 
   /**
@@ -50,12 +55,15 @@ export default class CommentsArea extends React.Component {
    */
   buildDOMTree(comments, parentUid) {
     let eligibleComments = comments.filter(x => x.parent_uid == parentUid);
+    console.log('building dom tree', comments, parentUid);
 
     return (<ul>
       {
         eligibleComments.map(x => {
           let children = comments.filter(x => x.parent_uid == x.uid);
+          console.log('children:', children);
           let html = [(<li><Comment 
+              onCommentAdded={this.handleCommentAdded.bind(this)}
               comment={x}  
             />
             </li>)]
@@ -73,8 +81,8 @@ export default class CommentsArea extends React.Component {
   }
 
   submitComment(event) {
-    const targetUrl = this.commentServer + "/c/"
-    const postContent = JSON.stringify({
+    let targetUrl = this.commentServer + "/c/"
+    let postContent = JSON.stringify({
       "source_uid": this.props.sourceUid,
       "parent_uid": this.props.sourceUid,
       content: this.state.commentText
