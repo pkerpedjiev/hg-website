@@ -2,6 +2,7 @@ import React from 'react';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import {json, request} from 'd3-request';
+import Comment from '../Comment/Comment';
 
 export default class CommentsArea extends React.Component {
   constructor(props) {
@@ -54,7 +55,10 @@ export default class CommentsArea extends React.Component {
       {
         eligibleComments.map(x => {
           let children = comments.filter(x => x.parent_uid == x.uid);
-          let html = [(<li>{x.content}</li>)]
+          let html = [(<li><Comment 
+              comment={x}  
+            />
+            </li>)]
 
           if (children.length > 0) {
             html.push(<ul>
