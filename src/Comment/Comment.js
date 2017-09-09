@@ -1,6 +1,4 @@
 import React from 'react';
-import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
 import {json, request} from 'd3-request';
 
 import "./styles.module.css";
@@ -12,7 +10,7 @@ export default class Comments extends React.Component {
     this.commentServer = 'http://127.0.0.1:8001';
 
     this.state = {
-      replyOpen: true,
+      replyOpen: false,
       replyValue: ""
     }
   }
@@ -21,6 +19,25 @@ export default class Comments extends React.Component {
     this.setState({
       replyValue: evt.target.value
     });
+  }
+
+  handleDeleteComment() {
+    let targetUrl = this.commentServer + "/c/" + this.props.comment.uid;
+
+    console.log('sending delete');
+
+    request(targetUrl)
+      .header("Content-Type", "application/json")
+      .header('Authorization', 'JWT ' + localStorage.getItem('id_token'))
+      .send('DELETE', function(error, data) {
+        if (error && error.target) {
+          console.error("Error deleting comment:", error.target.response);
+        } else {
+          console.log('successfully deleted comment', data);
+          //this.props.onCommentDeleted(JSON.parse(data.response));
+          this.props.onCommentDeleted(this.props.comment.uid);
+        }
+      }.bind(this));
   }
 
   handleSubmitComment() {
@@ -44,6 +61,7 @@ export default class Comments extends React.Component {
         } else {
           console.log('successfully added top level comment', data);
           this.props.onCommentAdded(JSON.parse(data.response));
+          this.setState({ replyOpen: false });
         }
       }.bind(this));
   }
@@ -75,12 +93,18 @@ export default class Comments extends React.Component {
     } else {
       replySection = (
         <div className="comment-reply">
-        <a 
-        href={'#'}
+        <button
         onClick={() => this.setState({replyOpen: true})}
         >
         reply
-        </a>
+        </button>
+        <span>{" "}</span>
+        <button
+        onClick={this.handleDeleteComment.bind(this)}
+        >
+        delete
+        </button>
+
         </div>
       )
     }

@@ -2,16 +2,10 @@ import React from 'react'
 import {json,request} from 'd3-request';
 import slugid from 'slugid';
 import {dictValues} from '../utils';
-import getMuiTheme from 'material-ui/styles/getMuiTheme'
-import EditTable from '../MaterialUiTableEdit/MaterialUiTableEdit.jsx';
-import TextField from 'material-ui/TextField';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
-import FontIcon from 'material-ui/FontIcon';
-
-import {Toolbar, ToolbarGroup} from 'material-ui/Toolbar';
+import EditTable from '../EditTable/EditTable.jsx';
 
 import './styles.module.css';
+import ForwardBackPage from '../ForwardBackPage.js';
 
 export default class DatasetsList extends React.Component {
   constructor(props) {
@@ -202,22 +196,6 @@ export default class DatasetsList extends React.Component {
     });
 
   }
-  contextTypes: {
-    muiTheme: React.PropTypes.object.isRequired
-  }
-
-
-  static childContextTypes =
-    {
-      muiTheme: React.PropTypes.object
-    }
-
-  getChildContext()
-  {
-    return {
-      muiTheme: getMuiTheme()
-    }
-  }
 
   handleNextPage() {
     /**
@@ -247,7 +225,7 @@ export default class DatasetsList extends React.Component {
     });
   }
 
-  handleSortBy(evt, index, columnName) {
+  handleSortBy(columnName) {
     /**
      * The user has chosen a sort order. This is usually
      * accomplished by clicking on one of the columns
@@ -280,7 +258,7 @@ export default class DatasetsList extends React.Component {
     this.requestTilesetLists(0, columnName);
   }
 
-  handleFilterChanged(event, newValue) {
+  handleFilterChanged(newValue) {
     /**
      * The datset filter search box field changed
      *
@@ -414,63 +392,28 @@ export default class DatasetsList extends React.Component {
 
     return(
       <div>
-      <Toolbar
-      style={{
-        backgroundColor: '#FFF',
-          marginBottom: 20
-      }}
-      >
-      <ToolbarGroup
-      firstChild={true}
-      >
-      <FontIcon 
-      className="material-icons"
-      style={{
-        paddingLeft: 0,
-          marginLeft: 56,
-          marginRight: 5}}
-      >
-      {"filter_list"}
-      </FontIcon>
+      <input 
+      type="text"
+      onChange={(evt) => this.handleFilterChanged(evt.target.value)}
+      />
 
-      <TextField 
-      style={{
-      }}
-      hintText=""
-      floatingLabelText=""
-      onChange={this.handleFilterChanged.bind(this)}
-      >
-      </TextField>
 
-      <FontIcon 
-      className="material-icons"
-      style={{marginRight: 5}}
-      >
-      {"sort"}
-      </FontIcon>
-
-      <SelectField
-      floatingLabelText={""}
-      value={this.state.sortBy}
-      onChange={this.handleSortBy.bind(this)}
+      <select
+        onChange={(evt) => this.handleSortBy(evt.target.value)} 
       >
       { 
         this.headers.map(x => {
-          return [(<MenuItem 
+          return [(<option
             value={x.field + "|asc"}
-            key={x.field + "-asc"}
-            primaryText={x.value + " Ascending"}
-            />),(<MenuItem 
+            >{x.field + "|asc"}</option>),
+            (<option
               value={x.field + "|desc"}
-              key={x.field + "-desc"}
-              primaryText={x.value + " Descending"}
-              />)
+              >{x.field + "|desc"}</option>)
           ]
         })
       }
-      </SelectField>
-      </ToolbarGroup>
-      </Toolbar>
+      </select>
+
       <EditTable
       rows={ datasets1 }
       onRowChange={ this.handleRowChange.bind(this) }
@@ -481,54 +424,14 @@ export default class DatasetsList extends React.Component {
       sortBy={this.state.sortBy}
       maxRows={this.pageSize}
       />
-      <div 
-      style={{
-        marginTop: 20,
-          marginLeft: "auto",
-          marginRight: "auto",
-          width: 80
-      }}
-      >
-      <div
-      style={{
-        display: "flex",
-          jusitfyContent: "center"
-      }}
-      >
-      <img src="img/backward.svg" 
-      alt="Previous datasets"
-      width="30px"
-      height="60px"
-      onClick={this.handlePrevPage.bind(this)}
-      className={"navigation-button"}
+      <ForwardBackPage 
+        onPrevPage={this.handlePrevPage.bind(this)}
+        onNextPage={this.handleNextPage.bind(this)}
+        processing={this.sent !== this.finished}
       />
-      { this.sent === this.finished ?
-        <div
-        style={{
-          minWidth: 60,
-            height: 60
-        }}
-        />
-        :
-        <img src="img/spinner.gif" 
-        alt="Loading..."
-        width="60px"
-        height="60px"
-        />
-      }
-
-      <img src="img/forward.svg" 
-      alt="Next datasets"
-      width="30px"
-      height="60px"
-      onClick={this.handleNextPage.bind(this)}
-      className={"navigation-button"}
-      />
-      </div>
       { this.state.updatingRow ? "Updating" : "Not updating" }
       <br />
       { "sent:" + this.sent + "Received:" + this.finished + "Error: " + this.state.errorMessage }
-      </div>
       </div>
     );
   }

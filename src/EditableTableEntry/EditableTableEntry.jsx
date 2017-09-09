@@ -1,7 +1,4 @@
 import React from 'react';
-import Check from 'material-ui/svg-icons/navigation/check';
-import ModeEdit from 'material-ui/svg-icons/editor/mode-edit';
-import {IconButton, TextField} from 'material-ui';
 
 export default class EditableTableEntry extends React.Component {
   constructor(props) {
@@ -89,39 +86,23 @@ export default class EditableTableEntry extends React.Component {
 
 
     if (!editable) {
-      return <TextField
-      id='y'
-      disabled={true}
-      style={textFieldStyle}
-      underlineStyle={{display: 'none'}}
-      value={value}
-        />
+        return value;
     }
 
     let selected = this.props.row.selected;
 
     if (selected) {
-      return <TextField
-      id="x"
-      onChange={onChange}
-      style={textFieldStyle}
-      underlineStyle={{bottom: '2px'}}
-      value={value}
-        />
+      return (<input 
+        type="text"
+        value={value}
+        onChange={onChange}
+        />);
     } else {
-      return <TextField
-      id="x"
-      onChange={onChange}
-      inputStyle={options.style}
-      style={textFieldStyle}
-      disabled={true}
-      underlineStyle={{display: 'none'}}
-      value={value}
-        />
+      return value;
     }
   }
 
-  handleRowClick(e) {
+  handleRowClick() {
     /**
      * A row has changed, update its value and call the parent
      * handler.
@@ -182,17 +163,15 @@ export default class EditableTableEntry extends React.Component {
     const rowKey = ['row', rowId].join('-')
     const selected = (row && row.selected) || false
 
-    const button = selected ? <Check /> : <ModeEdit />
-      const tooltip = selected ? 'Done' : 'Edit'
+    const button = selected ? "Done" : "Edit";
+    const tooltip = selected ? 'Done' : 'Edit'
 
     const checkbox = row.header ? <div style={checkboxStyle} />
-      : <IconButton 
-    onClick={this.handleRowClick.bind(this)}
-    style={checkboxStyle} 
-    tooltip={tooltip} 
+      : <button
+          onClick={this.handleRowClick.bind(this)}
       >
       {button}
-      </IconButton>
+      </button>
 
       return (
         <div 
