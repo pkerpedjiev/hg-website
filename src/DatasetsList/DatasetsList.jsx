@@ -2,7 +2,7 @@ import React from 'react'
 import {json,request} from 'd3-request';
 import slugid from 'slugid';
 import {dictValues} from '../utils';
-import EditTable from '../EditTable/EditTable.jsx';
+import EditTable from '../EditTable.jsx';
 
 import './styles.module.css';
 import ForwardBackPage from '../ForwardBackPage.js';
@@ -389,6 +389,7 @@ export default class DatasetsList extends React.Component {
     }
 
     datasets1 = datasets1.slice(this.state.currentDataPosition, this.state.currentDataPosition + this.pageSize)
+    console.log('datasets1', datasets1);
 
     return(
       <div>
