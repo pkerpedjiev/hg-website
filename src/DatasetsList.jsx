@@ -1,11 +1,13 @@
 import React from 'react'
 import {json,request} from 'd3-request';
 import slugid from 'slugid';
-import {dictValues} from '../utils';
-import EditTable from '../EditTable.jsx';
+import {dictValues} from './utils';
+import EditableTableEntry from './EditableTableEntry.jsx';
+import CommentsArea from './CommentsArea.js';
 
-import './styles.module.css';
-import ForwardBackPage from '../ForwardBackPage.js';
+import './DatasetsList.module.css';
+import './Comment.module.css';
+import ForwardBackPage from './ForwardBackPage.js';
 
 export default class DatasetsList extends React.Component {
   constructor(props) {
@@ -290,6 +292,10 @@ export default class DatasetsList extends React.Component {
      * This function should never be called while another row
      * is being updated on the server.
      *
+     * This function caches the value of the row so that it there is
+     * an error updating the row on the server, its value can be 
+     * restored
+     *
      * Arguments:
      *  row: {server: "127.0.0.1/api/v1", entry: ...}
      */
@@ -297,7 +303,7 @@ export default class DatasetsList extends React.Component {
     this.rowsBeforeEditing[row.serverUidKey] = JSON.parse(JSON.stringify(row.entry));
   }
 
-  handleRowChange(row) {
+  handleRowChanged(row) {
     /**
      * A row was changed in the editable table.
      *
@@ -415,16 +421,24 @@ export default class DatasetsList extends React.Component {
       }
       </select>
 
-      <EditTable
-      rows={ datasets1 }
-      onRowChange={ this.handleRowChange.bind(this) }
-      onRowSelected={ this.handleRowSelected.bind(this) }
-      sortyBy={this.state.sortBy}
-      headerColumns={this.headers}
-      onSortBy={this.handleSortBy.bind(this)}
-      sortBy={this.state.sortBy}
-      maxRows={this.pageSize}
-      />
+      { datasets1.map( row => {
+        console.log('row:', row);
+        return (
+        <div
+          key={row.uid}
+        >
+          <EditableTableEntry
+            row={row}
+            editableFields={{'name': 1}}
+            displayFields={['uid', 'name', 'created']}
+            onStartRowEditing={this.handleRowSelected.bind(this)}
+            onEndRowEditing={this.handleRowChanged.bind(this)}
+          />
+          <CommentsArea
+            sourceUid={row.tilesetUid}
+          />
+        </div>
+        )})}
       <ForwardBackPage 
         onPrevPage={this.handlePrevPage.bind(this)}
         onNextPage={this.handleNextPage.bind(this)}

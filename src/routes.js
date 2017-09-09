@@ -6,7 +6,7 @@ import Callback from './Callback/Callback';
 import Auth from './Auth/Auth';
 import HGViewer from './HGViewer/HGViewer';
 import history from './history';
-import DatasetsList from './DatasetsList/DatasetsList.jsx'
+import DatasetsList from './DatasetsList.jsx'
 import SettingsComponent from './SettingsComponent/SettingsComponent.jsx'
 
 const auth = new Auth();

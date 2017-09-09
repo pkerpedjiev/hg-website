@@ -1,7 +1,7 @@
 import React from 'react';
 import {json, request} from 'd3-request';
 
-import "./styles.module.css";
+import "./Comment.module.css";
 
 export default class Comments extends React.Component {
   constructor(props) {

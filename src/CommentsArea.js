@@ -1,10 +1,6 @@
 import React from 'react';
-import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
 import {json, request} from 'd3-request';
-import Comment from '../Comment/Comment';
-
-import "./styles.module.css"
+import Comment from './Comment';
 
 export default class CommentsArea extends React.Component {
   constructor(props) {
@@ -45,7 +41,7 @@ export default class CommentsArea extends React.Component {
 
   handleCommentDeleted(uid) {
     this.setState({
-      retrievedComments: this.state.retrievedComments.filter(x => x.uid != uid)
+      retrievedComments: this.state.retrievedComments.filter(x => x.uid !== uid)
     });
   }
 
