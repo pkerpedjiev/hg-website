@@ -424,7 +424,7 @@ export default class DatasetsList extends React.Component {
       { datasets1.map( row => {
         console.log('row:', row);
         return (
-        <div
+          <div
           key={row.uid}
         >
           <EditableTableEntry
@@ -434,9 +434,12 @@ export default class DatasetsList extends React.Component {
             onStartRowEditing={this.handleRowSelected.bind(this)}
             onEndRowEditing={this.handleRowChanged.bind(this)}
           />
+          <hr />
+          {/*
           <CommentsArea
             sourceUid={row.tilesetUid}
           />
+          */}
         </div>
         )})}
       <ForwardBackPage 
