@@ -23,8 +23,7 @@ export default class AllRoutes extends React.Component {
 
         this.state = {
             settings: { 
-                trackSourceServers: new Set(['http://127.0.0.1:8000/api/v1',
-                    'http://higlass.io/api/v1']),
+                trackSourceServers: new Set(['http://127.0.0.1:8000/api/v1']),
                 commentsServer: "http://127.0.0.1:8001"
             }
         }
