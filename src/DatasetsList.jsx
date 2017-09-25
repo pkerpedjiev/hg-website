@@ -8,6 +8,7 @@ import CommentsArea from './CommentsArea.js';
 import './DatasetsList.module.css';
 import './Comment.module.css';
 import ForwardBackPage from './ForwardBackPage.js';
+import UploadFile from './UploadFile.jsx';
 
 export default class DatasetsList extends React.Component {
   constructor(props) {
@@ -399,6 +400,9 @@ export default class DatasetsList extends React.Component {
 
     return(
       <div>
+      <UploadFile
+
+      />
       <input 
       type="text"
       onChange={(evt) => this.handleFilterChanged(evt.target.value)}
@@ -408,6 +412,7 @@ export default class DatasetsList extends React.Component {
       <select
         onChange={(evt) => this.handleSortBy(evt.target.value)} 
       >
+
       { 
         this.headers.map(x => {
           return [(<option
