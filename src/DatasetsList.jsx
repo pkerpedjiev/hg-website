@@ -432,19 +432,21 @@ export default class DatasetsList extends React.Component {
           <div
           key={row.uid}
         >
-          <EditableTableEntry
-            row={row}
-            editableFields={{'name': 1}}
-            displayFields={['uid', 'name', 'created']}
-            onStartRowEditing={this.handleRowSelected.bind(this)}
-            onEndRowEditing={this.handleRowChanged.bind(this)}
-          />
-          <hr />
-          {/*
-          <CommentsArea
-            sourceUid={row.tilesetUid}
-          />
-          */}
+          <div>
+            <EditableTableEntry
+              row={row}
+              editableFields={{'name': 1}}
+              displayFields={['uid', 'name', 'created']}
+              onStartRowEditing={this.handleRowSelected.bind(this)}
+              onEndRowEditing={this.handleRowChanged.bind(this)}
+            />
+            <hr />
+            {/*
+            <CommentsArea
+              sourceUid={row.tilesetUid}
+            />
+            */}
+          </div>
         </div>
         )})}
       <ForwardBackPage 

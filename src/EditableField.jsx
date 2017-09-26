@@ -12,25 +12,32 @@ export default class EditableField extends React.Component {
 
   render() {
     return(
-      <div>
-      { this.state.editing ? 
+      <div
+        style={{marginLeft: 20}}
+      >
+        { this.state.editing ? 
         <span>
           <input type={'text'} value={this.state.value}></input>
           <button>{'Submit'}</button>
           <button
             onClick={() => this.setState({editing: false})}
-           >
+          >
             {'Cancel'}
           </button>
         </span>
         :
-        <span>
+        <span
+        >
           <span>{this.state.value}</span>
-          <button onClick={() => this.setState({editing: true}) } >
+          <button 
+            style={{marginLeft: 20}}
+
+            onClick={() => this.setState({editing: true}) } 
+          >
             {'Edit'}
           </button>
         </span>
-      }
+        }
       </div>
     );
   }

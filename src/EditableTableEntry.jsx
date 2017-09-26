@@ -1,10 +1,11 @@
 import React from 'react';
 
 import "./EditableTableEntry.module.css";
-import EditableField from "./EditableField.js";
+import EditableField from "./EditableField.jsx";
 
 const EditableTableEntry = props => (
   <div
+    style={{ display: "flex", flexDirection: "row" }}
     className="editable-table-entry"
   >
   {
