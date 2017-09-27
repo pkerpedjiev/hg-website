@@ -10,6 +10,34 @@ export default class EditableField extends React.Component {
     });
   }
 
+  handleInputChanged(newInput) {
+    this.setState({
+      value: newInput
+    });
+  }
+
+  handleStartEditing() {
+    this.setState({editing: true})
+
+    this.props.onEditStart();
+  }
+
+  handleEndEditing() {
+    this.props.onEditEnd(this.state.value);
+
+    this.setState({
+      editing: false
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log('receiving props', nextProps);
+
+    this.setState({
+      value: nextProps.value
+    });
+  }
+
   render() {
     return(
       <div
@@ -17,10 +45,17 @@ export default class EditableField extends React.Component {
       >
         { this.state.editing ? 
         <span>
-          <input type={'text'} value={this.state.value}></input>
-          <button>{'Submit'}</button>
+          <input type={'text'} 
+            onChange={evt => this.handleInputChanged(evt.target.value)}
+            value={this.state.value}>
+          </input>
           <button
-            onClick={() => this.setState({editing: false})}
+            onClick={this.handleEndEditing.bind(this)}
+          >
+            {'Submit'}
+          </button>
+          <button
+            onClick={() => this.setState({editing: false, value: this.props.value})}
           >
             {'Cancel'}
           </button>
@@ -32,7 +67,7 @@ export default class EditableField extends React.Component {
           <button 
             style={{marginLeft: 20}}
 
-            onClick={() => this.setState({editing: true}) } 
+            onClick={this.handleStartEditing.bind(this)} 
           >
             {'Edit'}
           </button>

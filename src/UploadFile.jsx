@@ -26,8 +26,9 @@ export default class UploadFile extends React.Component {
         console.warn('error:', error);
       } else {
         console.log('data:', data.response);
+        this.props.onNewFileUploaded();
       }
-    });
+    }.bind(this));
   }
 
   uploadFileToAWS(file, accessKeyId, secretAccessKey, 

@@ -11,15 +11,36 @@ const EditableTableEntry = props => (
   {
     props.displayFields.map(field => 
       field in props.editableFields ?
-      <EditableField
+      <div
         key={field}
+      >
+      <div>{field}</div>
+      <EditableField
         value={props.row[field]}
-        onEditStart={props.onStartRowEditing}
-        onEditEnd={props.onEndRowEditing}
-      /> :
-      <div key={field}>{props.row[field]}</div>
+        onEditStart={() => props.onStartRowEditing(props.row)}
+        onEditEnd={(newValue) => {
+          let newRow = JSON.parse(JSON.stringify(props.row));
+          newRow.entry[field] = newValue;
+          props.onEndRowEditing(newRow);
+        }}
+      /> 
+    </div>
+      :
+      <div
+        key={field}
+      >
+        <div>{field}</div>
+      <div 
+        style={{marginLeft: 10}}
+      >{props.row[field]}</div>
+    </div>
     )
   }
+  <button
+    onClick={() => props.onDeleteRow(props.row)}
+  >
+    Delete
+  </button>
   </div>
 )
 

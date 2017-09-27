@@ -29,6 +29,7 @@ export default class DatasetsList extends React.Component {
       {value: 'UID', field: 'uuid', type: 'TextField', width: 100},
       {value: 'Name', field: 'name', type: 'TextField', width: 300},
       {value: 'Datatype', field: 'datatype', type: 'TextField', width: 100},
+      {value: 'Filetype', field: 'filetype', type: 'TextField', width: 100},
       {value: 'Created', field: 'created', type: 'TextField', width: 200},
       {value: 'Server', field: 'server', type: 'TextField', width: 200},
       {value: 'Owner', field: 'owner', type: 'TextField', width: 200}
@@ -62,6 +63,34 @@ export default class DatasetsList extends React.Component {
     this.requestTilesetLists(this.pageSize, this.state.sortBy);
   }
 
+  dbRecordToRow(dbRecord, sourceServer) {
+    /**
+     * Store a database record as a row that we'll display in
+     * our table
+     *
+     * Parameters
+     * ----------
+     *  dbRecord: string
+     *    The database record to use as the basis for this row
+     *  sourceServer: string
+     *    The server that this entry came from
+     */
+
+    let row = {
+      server: sourceServer,
+      tilesetUid: dbRecord.uuid,
+      serverUidKey: this.serverUidKey(sourceServer, dbRecord.uuid),
+      datatype: dbRecord.datatype,
+      filetype: dbRecord.filetype,
+      name: dbRecord.name,
+      uid: slugid.nice(),
+      created: dbRecord.created,
+      entry: dbRecord
+    };
+
+    return row;
+  }
+
   prepareNewEntries(sourceServer, newEntries, existingTilesets) {
     /**
      * Add meta data to new tileset entries before adding
@@ -91,20 +120,7 @@ export default class DatasetsList extends React.Component {
      */
     let allTilesets = existingTilesets;
 
-    let entries = newEntries.map(ne => {
-      let ane = {
-        server: sourceServer,
-        tilesetUid: ne.uuid,
-        serverUidKey: this.serverUidKey(sourceServer, ne.uuid),
-        datatype: ne.datatype,
-        name: ne.name,
-        uid: slugid.nice(),
-        created: ne.created,
-        entry: ne
-      };
-
-      return ane;
-    });
+    let entries = newEntries.map(ne => this.dbRecordToRow(ne, sourceServer));
 
     entries.forEach(ne => {
       allTilesets[ne.serverUidKey] = ne;
@@ -261,6 +277,21 @@ export default class DatasetsList extends React.Component {
     this.requestTilesetLists(0, columnName);
   }
 
+  handleNewFileUploaded() {
+    /*
+     * A new file has been uploaded so we should refresh
+     * the list of datasets
+     */
+    // clear all previously retrieved tilesets
+    this.setState({
+      currentDataPosition: 0
+    });
+
+    // we're going to the top of the list
+    this.requestTilesetLists(0, this.state.sortBy);
+
+  }
+
   handleFilterChanged(newValue) {
     /**
      * The datset filter search box field changed
@@ -282,6 +313,35 @@ export default class DatasetsList extends React.Component {
 
     // we're going to the top of the list
     this.requestTilesetLists(0, this.state.sortBy);
+  }
+
+  handleDeleteRow(row) {
+    /**
+     * Delete an entry from the database
+     *
+     * Paremeters
+     * ----------
+     *  row: {server: '127.0.0.1/api/v1', entry: ...}
+     */
+    let targetUrl = row.server + "/tilesets/" + row.entry.uuid + "/";
+
+    request(targetUrl)
+      .header('Authorization', 'JWT ' + localStorage.getItem('id_token'))
+      .send('DELETE', function(error, data) {
+        console.log('error:', error);
+        console.log('data:', data);
+        if (error && error.target) {
+          // couldn't delete the entry so nothing happens
+        } else {
+          // the entry was deleted;
+          let tilesets = this.state.tilesets;
+
+          delete tilesets[row.serverUidKey];
+          this.setState({
+            tilesets: tilesets
+          });
+        }
+      }.bind(this));
   }
 
   handleRowSelected(row) {
@@ -335,6 +395,7 @@ export default class DatasetsList extends React.Component {
           let changedTileset = tilesets[row.serverUidKey];
 
           changedTileset.entry = this.rowsBeforeEditing[row.serverUidKey];
+          console.log('reverting', changedTileset.entry);
 
           this.setState({
             tilesets: tilesets,
@@ -346,6 +407,7 @@ export default class DatasetsList extends React.Component {
           let changedTileset = tilesets[row.serverUidKey];
 
           changedTileset.entry = row.entry;
+          tilesets[row.serverUidKey] = this.dbRecordToRow(row.entry, row.server);
 
           this.setState({
             tilesets:  tilesets,
@@ -370,13 +432,13 @@ export default class DatasetsList extends React.Component {
 
   render() {
     let datasets1 = dictValues(this.state.tilesets)
-
-
       .filter(x => {
         if (this.searchValue.length)
           return x.name.toLowerCase().includes(this.searchValue.toLowerCase());
         return true;
       })
+
+    console.log('datasets1:', datasets1);
 
 
     if (this.state.sortBy) {
@@ -401,7 +463,7 @@ export default class DatasetsList extends React.Component {
     return(
       <div>
       <UploadFile
-
+        onNewFileUploaded={this.handleNewFileUploaded.bind(this)}
       />
       <input 
       type="text"
@@ -435,10 +497,11 @@ export default class DatasetsList extends React.Component {
           <div>
             <EditableTableEntry
               row={row}
-              editableFields={{'name': 1}}
-              displayFields={['uid', 'name', 'created']}
+              editableFields={{'name': 1, 'datatype': 1, 'filetype': 1 }}
+              displayFields={['tilesetUid', 'name', 'datatype', 'filetype', 'created']}
               onStartRowEditing={this.handleRowSelected.bind(this)}
               onEndRowEditing={this.handleRowChanged.bind(this)}
+              onDeleteRow={this.handleDeleteRow.bind(this)}
             />
             <hr />
             {/*
